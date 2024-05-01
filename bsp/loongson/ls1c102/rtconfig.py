@@ -26,10 +26,12 @@ if os.getenv('RTT_EXEC_PATH'):
 BUILD       = 'debug'
 
 PREFIX = 'loongarch32-linux-gnu-'
+# PREFIX = 'loongarch32r-linux-gnusf-'
 CC = PREFIX + 'gcc'
 AS = PREFIX + 'as'
 AR = PREFIX + 'ar'
-LINK = PREFIX + 'ld'
+LINK = PREFIX + 'gcc'
+# LINK = PREFIX + 'ld'
 TARGET_EXT = 'elf'
 SIZE = PREFIX + 'size'
 OBJDUMP = PREFIX + 'objdump'
@@ -37,9 +39,10 @@ OBJCPY = PREFIX + 'objcopy'
 READELF = PREFIX + 'readelf'
 
 DEVICE = ' -msoft-float'
-CFLAGS = DEVICE + ' -D_GNU_SOURCE -D_TIMEVAL_DEFINED -O0 -ffunction-sections -fdata-sections -fsched-pressure -fno-builtin'
-AFLAGS = ' -c' + DEVICE + ' -fno-pic -fno-builtin -x assembler-with-cpp -DSYSTEM_STACK=0xa00003fc'
-LFLAGS = ' --gc-sections -Map=rtthread.map -T ls1c102.lds -G 0 -static'
+CFLAGS = DEVICE + ' -D_GNU_SOURCE -D_TIMEVAL_DEFINED -fno-builtin -ffunction-sections -fdata-sections -fno-exceptions -fomit-frame-pointer'
+AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
+LFLAGS = ' -nostartfiles -static -Wl,--gc-sections,-Map=rtthread.map -T ls1c102.lds'
+# LFLAGS = '-Map=rtthread.map -T ls1c102.lds --gc-sections'
 
 CPATH = ''
 LPATH = ''
@@ -53,3 +56,5 @@ else:
 DUMP_ACTION = OBJDUMP + ' -D -S $TARGET > rtt.asm\n'
 READELF_ACTION = READELF + ' -a $TARGET > rtt.map\n'
 POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
+
+POST_ACTION += DUMP_ACTION

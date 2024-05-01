@@ -1,4 +1,4 @@
-/*
+/* 
  * loongson software
  */
 OUTPUT_FORMAT("elf32-loongarch")
@@ -7,62 +7,108 @@ OUTPUT_ARCH(loongarch)
 ENTRY(_start)
 MEMORY
 {
-    flash(R) : ORIGIN = 0x1c000000, LENGTH = 64K
-    iram(RW) : ORIGIN = _RAM_BSS, LENGTH = 4K
-    dram(RW) : ORIGIN = _RAM_DATA, LENGTH = 4K
+    flash(R) : ORIGIN = 0x1c000000, LENGTH = 128K
+    dram1(RW) : ORIGIN = _RAM1, LENGTH = 4K
+    dram2(RW) : ORIGIN = _RAM2, LENGTH = 4K
 }
 SECTIONS
 {
-	.text	: 
-    { 
+	.text :
+    {
         . = ALIGN(4);
-        *(.text .text.*) 
+        *(.startup)
+
+        . = ALIGN(0x1000);
+        __eentry_start = .;
+        KEEP(*(.exc_vectors))
+        __eentry_end = .;
+
+        . = ALIGN(8);
+        *(.text)
+        *(.text.*)
+        *(.rodata)
+        *(.rodata.*)
+        *(.rodata1)
+        *(.rodata1.*)
+
+        /* section information for finsh shell */
+        /* . = ALIGN(4);
+        __fsymtab_start = .;
+        KEEP(*(FSymTab))
+        __fsymtab_end = .;
         . = ALIGN(4);
-        _etext = .;
+        __vsymtab_start = .;
+        KEEP(*(VSymTab))
+        __vsymtab_end = .;
+        . = ALIGN(4);
+
+        . = ALIGN(4);
+        __rt_init_start = .;
+        KEEP(*(SORT(.rti_fn*)))
+        __rt_init_end = .;
+        . = ALIGN(4);
+
+        . = ALIGN(4);
+        __rt_utest_tc_tab_start = .;
+        KEEP(*(UtestTcTab))
+        __rt_utest_tc_tab_end = .; */
+        . = ALIGN(16);
     } > flash
     
-	.rodata  : 
-    { 
-        . = ALIGN(4);
-        *(.rodata .rodata.*) 
-        . = ALIGN(4);
-        _sidata = ALIGN(.,4);
-        . = ALIGN(4);
-    } > flash
-    
-	.data  : AT(_sidata)
+    _sidata = LOADADDR(.data);
+
+    . = ALIGN(16);
+	.data :
     {
         _sdata = .;
         . = ALIGN(4);
-        *(.got.plt) 
-        . = ALIGN(4);
         *(.got) 
         . = ALIGN(4);
-        *(.data .data.*) 
+        *(.got.plt) 
         . = ALIGN(4);
-        _edata = .;
-    } > dram
+        *(.data)
+        *(.data.*)
 
-    .stack :
-    {
+        *(.data1)
+        *(.data1.*)
+
         . = ALIGN(8);
-        _system_stack_start = .;
-        . = . + 0x400; /* 1kb system stack */
-        _system_stack = .;
-    }
+        *(.sdata)
+        *(.sdata.*)
+        _edata = .;
+    } > dram1 AT > flash
     
+    .sbss :
+    {
+        __bss_start = .;
+        *(.sbss)
+        *(.sbss.*)
+        *(.dynsbss)
+        *(.scommon)
+    } > dram1
+
     .bss :
     {
-        _sbss = .; /* BSS */
-        . = ALIGN(4);
-        *(.sbss)
-        . = ALIGN(4);
         *(.bss)
-        . = ALIGN(4);
-        *(.scommon) 
-        . = ALIGN(4);
-        *(COMMON) 
-        . = ALIGN(4);
-        _ebss = . ;	 
-    } > iram
+        *(.bss.*)
+        *(.dynbss)
+        *(COMMON)
+        __bss_end = .;
+    } > dram1
+
+    .heap_stack :
+    {
+        . = ALIGN(16);
+        _system_heap = .;
+        /* . = . + 0x100; */
+        . = . + 0x800; /* 2kb system heap */
+        _system_heap_end = .;
+        _system_stack_start = .;
+        /* . = . + 0x100; */
+        . = . + 0x480; /* 1.5kb system stack */
+        _system_stack = .;
+    } > dram2
+
+    _end = .;
+
 }

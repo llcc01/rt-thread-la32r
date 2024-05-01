@@ -30,7 +30,7 @@
 
 #ifdef RT_USING_PIN
 
-void ls1c102_pin_mode(struct rt_device *device, rt_base_t pin, rt_base_t mode) {
+void ls1c102_pin_mode(struct rt_device *device, rt_base_t pin, rt_uint8_t mode) {
   if (mode == PIN_MODE_INPUT) {
     gpio_init((int)pin, LA_GPIO_INPUT);
   } else if (mode == PIN_MODE_OUTPUT) {
@@ -40,18 +40,18 @@ void ls1c102_pin_mode(struct rt_device *device, rt_base_t pin, rt_base_t mode) {
 }
 
 void ls1c102_pin_write(struct rt_device *device, rt_base_t pin,
-                       rt_base_t value) {
+                       rt_uint8_t value) {
   gpio_write((int)pin, value);
 
   return;
 }
 
-int ls1c102_pin_read(struct rt_device *device, rt_base_t pin) {
+rt_ssize_t ls1c102_pin_read(struct rt_device *device, rt_base_t pin) {
   return gpio_read((int)pin);
 }
 
-rt_err_t ls1c102_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                                rt_uint32_t mode, void (*hdr)(void *args),
+rt_err_t ls1c102_pin_attach_irq(struct rt_device *device, rt_base_t pin,
+                                rt_uint8_t mode, void (*hdr)(void *args),
                                 void *args) {
   /*
 unsigned int gpio = pin;
@@ -66,12 +66,12 @@ irq_name);
   return RT_EOK;
 }
 
-rt_err_t ls1c102_pin_detach_irq(struct rt_device *device, rt_int32_t pin) {
+rt_err_t ls1c102_pin_detach_irq(struct rt_device *device, rt_base_t pin) {
   return RT_EOK;
 }
 
 rt_err_t ls1c102_pin_irq_enable(struct rt_device *device, rt_base_t pin,
-                                rt_uint32_t enabled) {
+                                rt_uint8_t enabled) {
   /*
 unsigned int gpio = pin;
 

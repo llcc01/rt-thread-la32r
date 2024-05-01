@@ -22,10 +22,35 @@
  * 2018-05-10     zhuangwei    first version
  */
 
+// #include <rtthread.h>
+// #include <rtdevice.h>
+#include "drv_uart.h"
+#include "exception.h"
+#include "soc_gpio.h"
 
-#include <rtthread.h>
+long int num;
+long int n2;
 
-int main(int argc, char** argv)
-{   
-    return 0;
+int main(int argc, char** argv) {
+  rt_hw_interrupt_enable(0);
+  gpio_init(1, LA_GPIO_OUTPUT);
+  gpio_write(1, 0);
+
+  uart_putc('b');
+  uart_putc('\n');
+
+  while (1) {
+    num = 1;
+    n2 = 2;
+    n2 = num;
+    my_delay_ms(500);
+    gpio_write(1, 1);
+    my_delay_ms(500);
+    gpio_write(1, 0);
+    uart_putc('a');
+    uart_putc('b');
+    uart_putc('c');
+    uart_putc('\n');
+  }
+  return 0;
 }

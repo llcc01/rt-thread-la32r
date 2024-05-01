@@ -6,8 +6,8 @@ src = Glob('*.c')
 CPPPATH = [cwd]
 
 
-if GetDepend('RT_USING_RTGUI') == False:
-    SrcRemove(src, 'touch.c')
+# if GetDepend('RT_USING_RTGUI') == False:
+#     SrcRemove(src, 'touch.c')
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 

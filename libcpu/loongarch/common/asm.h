@@ -181,7 +181,7 @@
 /*
  * How to add/sub/load/store/shift pointers.
  */
-#define PTR_LA		la
+#define PTR_LA		la.abs
 #if (_LOONGARCH_SZPTR == 32)
 #define PTR_ADDU	add.w
 #define PTR_ADDIU	addi.w

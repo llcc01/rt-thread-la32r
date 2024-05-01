@@ -19,12 +19,15 @@
 #include <rthw.h>
 #include <rtthread.h>
 
+#include "drv_uart.h"
+#include "exception.h"
 #include "ls1x.h"
 #include "ls1x_common.h"
-#include "drv_uart.h"
+#include "soc_gpio.h"
 #include "timer.h"
 
-extern unsigned char __bss_end;
+extern unsigned int _system_heap;
+extern unsigned int _system_heap_end;
 
 /**
  * @addtogroup Loongson LS1B
@@ -45,37 +48,50 @@ void rt_hw_timer_handler(void) {
 /**
  * This function will initial OS timer
  */
-void rt_hw_timer_init(void) {
-  Set_Timer_Init(LA_TIMER);  //  1.25ms
+int rt_hw_timer_init(void) {
+  Set_Timer_Init(LA_TIMER);  //  1.25ms]
+  return 0;
 }
 
 /**
- * This function will initial sam7s64 board.
+ * This function will initial board.
  */
 void rt_hw_board_init(void) {
-  /* init hardware interrupt */
-  //   rt_hw_interrupt_init();
-  EnableInt();  // 开总中断
+  rt_hw_interrupt_enable(0);
+
+  gpio_init(0, LA_GPIO_OUTPUT);
+  gpio_init(1, LA_GPIO_OUTPUT);
+  gpio_init(2, LA_GPIO_OUTPUT);
+  gpio_init(3, LA_GPIO_OUTPUT);
+  gpio_init(4, LA_GPIO_OUTPUT);
+
+  UART_FIFO_CTRL = 0x3;  // 115200
+
+  gpio_write(0, 1);
+  gpio_write(1, 1);
+  gpio_write(2, 1);
+  gpio_write(3, 1);
+  gpio_write(4, 1);
 
 #ifdef RT_USING_HEAP
-  rt_system_heap_init((void*)&__bss_end, (void*)RT_HW_HEAP_END);
+  rt_system_heap_init((void *)&_system_heap, (void *)&_system_heap_end);
 #endif
 
-#ifdef RT_USING_SERIAL
-  /* init hardware UART device */
+  rt_hw_interrupt_init();
+
   rt_hw_uart_init();
-#endif
 
 #ifdef RT_USING_CONSOLE
   /* set console device */
   rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
-  /* init operating system timer */
-  rt_hw_timer_init();
+
+  // rt_hw_timer_init();
 
 #ifdef RT_USING_COMPONENTS_INIT
   rt_components_board_init();
 #endif
+
 }
 
 /*@}*/

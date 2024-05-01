@@ -19,6 +19,8 @@
 
 #ifndef __ASSEMBLY__
 
+#include <rtthread.h>
+
 struct pt_regs {
 	/* Saved main processor registers. */
 	unsigned long regs[32];

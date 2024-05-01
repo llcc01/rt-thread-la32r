@@ -19,9 +19,6 @@
 
 void rt_hw_board_init(void);
 
-/* 4K SRAM */
-#define RT_HW_HEAP_END	(0xa0001fff)
-
 #define LA_TIMER (8 * 10000) // 1.25ms
 
 #endif

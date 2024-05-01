@@ -22,11 +22,27 @@
 #define UART_CTRL_115200 3
 #define UART_CTRL_PARITY 4
 
+/*
+    delay right.
+*/
+#define my_delay_us(n)                 \
+  do {                                 \
+    unsigned d = ((n * 118) >> 7) + 1; \
+    while (d--) {                      \
+      asm volatile("nop;nop;nop;nop"); \
+    }                                  \
+  } while (0)
+
+#define my_delay_ms(n) my_delay_us(1013 * n)  // ms
+
 typedef struct {
   unsigned int baudrate;
   uint8_t rx_enable;
 } ls1x_uart_info_t;
 
-void rt_hw_uart_init(void);
+int rt_hw_uart_init(void);
+
+void uart_putc(char c);
+char uart_getc(void);
 
 #endif

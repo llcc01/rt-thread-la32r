@@ -21,7 +21,6 @@
 #include "ptrace.h"
 
 
-	.align	5
 /*
  * void rt_hw_context_switch(rt_uint32 from, rt_uint32 to)
  * a0 --> from
@@ -29,7 +28,9 @@
  */
     .globl rt_hw_context_switch
 rt_hw_context_switch:
-    # MTC0    ra, CP0_EPC
+    move t0, ra
+    csrwr t0, CSR_EPC
+
     SAVE_ALL
 
     REG_S      sp, a0, 0       /* store sp in preempted tasks TCB */
@@ -72,56 +73,3 @@ _reswitch:
 /*
  * void rt_hw_context_switch_interrupt_do(rt_base_t flag)
  */
-    .globl rt_interrupt_enter
-    .globl rt_interrupt_leave
-    .globl rt_general_exc_dispatch
-    .globl mips_irq_handle
-mips_irq_handle:
-    SAVE_ALL
-
-    /* let x0 keep the current context sp */
-    move    x0, sp
-    /* switch to kernel stack */
-    PTR_LA  sp, _system_stack
-
-    bl      rt_interrupt_enter
-    nop
-    /* Get Old SP from x0 as paremeter in a0 */
-    move    a0, x0
-    bl      rt_general_exc_dispatch
-    nop
-    bl      rt_interrupt_leave
-    nop
-
-    /* switch sp back to thread context */
-    move    sp, x0
-
-    /*
-    * if rt_thread_switch_interrupt_flag set, jump to
-    * rt_hw_context_switch_interrupt_do and do not return
-    */
-    PTR_LA  x0, rt_thread_switch_interrupt_flag
-    LONG_L  x0, x0, 0
-    beqz    x0, spurious_interrupt
-    nop
-    PTR_LA  x0, rt_thread_switch_interrupt_flag
-    LONG_S  zero, x0, 0                     /* clear flag */
-    nop
-
-    /*
-    * switch to the new thread
-    */
-    PTR_LA  x0, rt_interrupt_from_thread
-    LONG_L  x0, x0, 0
-    nop
-    LONG_S  sp, x0, 0                       /* store sp in preempted task TCB */
-
-    PTR_LA  x0, rt_interrupt_to_thread
-    LONG_L  x0, x0, 0
-    nop
-    LONG_L  sp, x0, 0                       /* get new task stack pointer */
-    bl      spurious_interrupt
-    nop
-
-spurious_interrupt:
-    RESTORE_ALL_AND_RET

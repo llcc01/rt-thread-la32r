@@ -19,19 +19,15 @@ struct rt_uart_ls1x {
 };
 
 void uart_putc(char c) {
-  volatile char uart_fifo0_ctrl;
-  uart_fifo0_ctrl = UART_FIFO_CTRL;
-  while (uart_fifo0_ctrl & 0x2) {
+  while (UART_FIFO_CTRL & 0x02) {
     ;
   }
   UART_FIFO = c;
 }
 
 char uart_getc(void) {
-  volatile char uart_fifo0_ctrl;
   char c;
-  uart_fifo0_ctrl = UART_FIFO_CTRL;
-  while (!(uart_fifo0_ctrl & 0x1)) {
+  while (!(UART_FIFO_CTRL & 0x1)) {
     ;
   }
   c = UART_FIFO;
@@ -39,24 +35,28 @@ char uart_getc(void) {
 }
 
 void uart_init(ls1x_uart_info_t *uart_info) {
-  UART_FIFO_CTRL = 3;
+  uint32_t uart_ctrl;
   switch (uart_info->baudrate) {
     case 9600:
-      UART_FIFO_CTRL = UART_CTRL_9600;
+      uart_ctrl = UART_CTRL_9600;
       break;
     case 19200:
-      UART_FIFO_CTRL = UART_CTRL_19200;
+      uart_ctrl = UART_CTRL_19200;
       break;
     case 38400:
-      UART_FIFO_CTRL = UART_CTRL_38400;
+      uart_ctrl = UART_CTRL_38400;
       break;
     case 115200:
-      UART_FIFO_CTRL = UART_CTRL_115200;
+      uart_ctrl = UART_CTRL_115200;
       break;
     default:
-      UART_FIFO_CTRL = UART_CTRL_115200;
+      uart_ctrl = UART_CTRL_115200;
       break;
   }
+  if (uart_info->rx_enable) {
+    ;
+  }
+  UART_FIFO_CTRL = uart_ctrl;
 }
 
 static rt_err_t ls1x_uart_configure(struct rt_serial_device *serial,
@@ -85,13 +85,13 @@ static rt_err_t ls1x_uart_control(struct rt_serial_device *serial, int cmd,
   uart_dev = (struct rt_uart_ls1x *)serial->parent.user_data;
 
   switch (cmd) {
-    case RT_DEVICE_CTRL_CLR_INT: /* disable rx irq */
-      rt_hw_interrupt_mask(uart_dev->IRQ);
-      break;
+    // case RT_DEVICE_CTRL_CLR_INT: /* disable rx irq */
+    //   rt_hw_interrupt_mask(uart_dev->IRQ);
+    //   break;
 
-    case RT_DEVICE_CTRL_SET_INT: /* enable rx irq */
-      rt_hw_interrupt_umask(uart_dev->IRQ);
-      break;
+    // case RT_DEVICE_CTRL_SET_INT: /* enable rx irq */
+    //   rt_hw_interrupt_umask(uart_dev->IRQ);
+    //   break;
 
     default:
       break;
@@ -141,7 +141,7 @@ static int ls1x_uart_getc(struct rt_serial_device *serial) {
 //   }
 // }
 
-static const struct rt_uart_ops ls1c102_uart_ops = {
+static const struct rt_uart_ops ls1x_uart_ops = {
     ls1x_uart_configure,
     ls1x_uart_control,
     ls1x_uart_putc,
@@ -150,8 +150,13 @@ static const struct rt_uart_ops ls1c102_uart_ops = {
 
 struct rt_serial_device serial1;
 
-void rt_hw_uart_init(void) {
-  // rt_hw_interrupt_install(uart->IRQ, uart_irq_ha ndler, &serial1, "UART1");
+int rt_hw_uart_init(void) {
+  struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
+
+  serial1.ops = &ls1x_uart_ops;
+  serial1.config = config;
+
+  // rt_hw_interrupt_install(uart->IRQ, uart_irq_handler, &serial1, "UART1");
 
   /* register UART1 device */
   rt_hw_serial_register(
@@ -159,4 +164,5 @@ void rt_hw_uart_init(void) {
       // RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_DMA_RX,
       // RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
       RT_DEVICE_FLAG_RDWR, NULL);
+  return 0;
 }
