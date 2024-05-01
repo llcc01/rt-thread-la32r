@@ -96,17 +96,20 @@ SECTIONS
         __bss_end = .;
     } > dram1
 
-    .heap_stack :
+    .stack :
+    {
+        . = ALIGN(16);
+        _system_stack_start = .;
+        . = . + 0x400; /* 1kb system stack */
+        _system_stack = .;
+    } > dram1
+
+    .heap :
     {
         . = ALIGN(16);
         _system_heap = .;
-        /* . = . + 0x100; */
-        . = . + 0x800; /* 2kb system heap */
+        . = . + 0xc00; /* 3.5kb system heap */
         _system_heap_end = .;
-        _system_stack_start = .;
-        /* . = . + 0x100; */
-        . = . + 0x480; /* 1.5kb system stack */
-        _system_stack = .;
     } > dram2
 
     _end = .;

@@ -6,6 +6,7 @@
 #include "csrdef.h"
 #include "drv_uart.h"
 #include "ptrace.h"
+#include "regdef.h"
 #include "soc_gpio.h"
 
 extern rt_ubase_t __eentry_start;
@@ -78,7 +79,52 @@ static void handle_interrupt(rt_base_t exccode) {
   irq_func(exccode, param);
 }
 
-void interrupt_dispatch(void) {
+void dump_pt_regs(struct pt_regs *regs) {
+  rt_kprintf("Dumping registers:\n");
+
+  rt_kprintf("RA(r%d) -> %p\t", REG_RA, regs->regs[REG_RA]);
+  rt_kprintf("TP(r%d) -> %p\t", REG_TP, regs->regs[REG_TP]);
+  rt_kprintf("SP(r%d) -> %p\n", REG_SP, regs->regs[REG_SP]);
+
+  rt_kprintf("A0(r%d) -> %p\t", REG_A0, regs->regs[REG_A0]);
+  rt_kprintf("A1(r%d) -> %p\t", REG_A1, regs->regs[REG_A1]);
+  rt_kprintf("A2(r%d) -> %p\t", REG_A2, regs->regs[REG_A2]);
+  rt_kprintf("A3(r%d) -> %p\n", REG_A3, regs->regs[REG_A3]);
+
+  rt_kprintf("A4(r%d) -> %p\t", REG_A4, regs->regs[REG_A4]);
+  rt_kprintf("A5(r%d) -> %p\t", REG_A5, regs->regs[REG_A5]);
+  rt_kprintf("A6(r%d) -> %p\t", REG_A6, regs->regs[REG_A6]);
+  rt_kprintf("A7(r%d) -> %p\n", REG_A7, regs->regs[REG_A7]);
+
+  rt_kprintf("T0(r%d) -> %p\t", REG_T0, regs->regs[REG_T0]);
+  rt_kprintf("T1(r%d) -> %p\t", REG_T1, regs->regs[REG_T1]);
+  rt_kprintf("T2(r%d) -> %p\t", REG_T2, regs->regs[REG_T2]);
+  rt_kprintf("T3(r%d) -> %p\n", REG_T3, regs->regs[REG_T3]);
+
+  rt_kprintf("T4(r%d) -> %p\t", REG_T4, regs->regs[REG_T4]);
+  rt_kprintf("T5(r%d) -> %p\t", REG_T5, regs->regs[REG_T5]);
+  rt_kprintf("T6(r%d) -> %p\t", REG_T6, regs->regs[REG_T6]);
+  rt_kprintf("T7(r%d) -> %p\n", REG_T7, regs->regs[REG_T7]);
+
+  rt_kprintf("T8(r%d) -> %p\n", REG_T8, regs->regs[REG_T8]);
+
+  rt_kprintf("X0(r%d) -> %p\t", REG_X0, regs->regs[REG_X0]);
+  rt_kprintf("FP(r%d) -> %p\n", REG_FP, regs->regs[REG_FP]);
+
+  rt_kprintf("S0(r%d) -> %p\t", REG_S0, regs->regs[REG_S0]);
+  rt_kprintf("S1(r%d) -> %p\t", REG_S1, regs->regs[REG_S1]);
+  rt_kprintf("S2(r%d) -> %p\t", REG_S2, regs->regs[REG_S2]);
+  rt_kprintf("S3(r%d) -> %p\n", REG_S3, regs->regs[REG_S3]);
+
+  rt_kprintf("S4(r%d) -> %p\t", REG_S4, regs->regs[REG_S4]);
+  rt_kprintf("S5(r%d) -> %p\t", REG_S5, regs->regs[REG_S5]);
+  rt_kprintf("S6(r%d) -> %p\t", REG_S6, regs->regs[REG_S6]);
+  rt_kprintf("S7(r%d) -> %p\n", REG_S7, regs->regs[REG_S7]);
+  
+  rt_kprintf("S8(r%d) -> %p\n", REG_S8, regs->regs[REG_S8]);
+}
+
+void interrupt_dispatch(struct pt_regs *regs) {
   rt_uint32_t estat, exccode, mask, pending;
 
   rt_hw_interrupt_disable();
@@ -125,7 +171,10 @@ void interrupt_dispatch(void) {
     uint32_t esubcode =
         (estat & M_CSR_ExStatus_EsubCode) >> S_CSR_ExStatus_EsubCode;
     uint32_t badv = __builtin_loongarch_csrrd(CSR_BadVAddr);
-    rt_kprintf("Exception %x(%x) at 0x%x\n", exccode, esubcode, badv);
+    uint32_t epc = __builtin_loongarch_csrrd(CSR_EPC);
+    rt_kprintf("Exception 0x%x(0x%x) at 0x%x, epc 0x%x\n", exccode, esubcode,
+               badv, epc);
+    dump_pt_regs(regs);
     // handle_interrupt(exccode);
   }
 

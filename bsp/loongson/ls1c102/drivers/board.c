@@ -20,10 +20,11 @@
 #include <rtthread.h>
 
 #include "drv_uart.h"
+#include "drv_pin.h"
 #include "exception.h"
-#include "ls1x.h"
-#include "ls1x_common.h"
-#include "soc_gpio.h"
+// #include "ls1x.h"
+// #include "ls1x_common.h"
+// #include "soc_gpio.h"
 #include "timer.h"
 
 extern unsigned int _system_heap;
@@ -59,19 +60,19 @@ int rt_hw_timer_init(void) {
 void rt_hw_board_init(void) {
   rt_hw_interrupt_enable(0);
 
-  gpio_init(0, LA_GPIO_OUTPUT);
-  gpio_init(1, LA_GPIO_OUTPUT);
-  gpio_init(2, LA_GPIO_OUTPUT);
-  gpio_init(3, LA_GPIO_OUTPUT);
-  gpio_init(4, LA_GPIO_OUTPUT);
+  // gpio_init(0, LA_GPIO_OUTPUT);
+  // gpio_init(1, LA_GPIO_OUTPUT);
+  // gpio_init(2, LA_GPIO_OUTPUT);
+  // gpio_init(3, LA_GPIO_OUTPUT);
+  // gpio_init(4, LA_GPIO_OUTPUT);
 
-  UART_FIFO_CTRL = 0x3;  // 115200
+  // UART_FIFO_CTRL = 0x3;  // 115200
 
-  gpio_write(0, 1);
-  gpio_write(1, 1);
-  gpio_write(2, 1);
-  gpio_write(3, 1);
-  gpio_write(4, 1);
+  // gpio_write(0, 1);
+  // gpio_write(1, 1);
+  // gpio_write(2, 1);
+  // gpio_write(3, 1);
+  // gpio_write(4, 1);
 
 #ifdef RT_USING_HEAP
   rt_system_heap_init((void *)&_system_heap, (void *)&_system_heap_end);
@@ -88,9 +89,11 @@ void rt_hw_board_init(void) {
 
   // rt_hw_timer_init();
 
-#ifdef RT_USING_COMPONENTS_INIT
-  rt_components_board_init();
-#endif
+  rt_hw_pin_init();
+
+// #ifdef RT_USING_COMPONENTS_INIT
+//   rt_components_board_init();
+// #endif
 
 }
 
