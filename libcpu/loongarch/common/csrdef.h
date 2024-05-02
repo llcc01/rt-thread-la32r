@@ -3,24 +3,24 @@
 
 #define CSR_CRMD 0x0
 #define CSR_PRMD 0x1
-#define CSR_CU 0x2
-#define CSR_Config 0x3
-#define CSR_ExConfig 0x4
-#define CSR_ExStatus 0x5
-#define CSR_EPC 0x6
-#define CSR_BadVAddr 0x7
-#define CSR_EBase 0xc
+#define CSR_EUEN 0x2
+#define CSR_MISC 0x3
+#define CSR_ECFG 0x4
+#define CSR_ESTAT 0x5
+#define CSR_ERA 0x6
+#define CSR_BADV 0x7
+#define csr_EENTRY 0xc
 #define CSR_ASID 0x18
 #define CSR_CPUN 0x20
-#define CSR_Config1 0x21
+#define CSR_MISC1 0x21
 #define CSR_KScratch0 0x30
 #define CSR_KScratch1 0x31
-#define CSR_TimerID 0x40
-#define CSR_TimerConfig 0x41
-#define CSR_TimerTicks 0x42
-#define CSR_TimerOffset 0x43
-#define CSR_TimerClear 0x44
-#define CSR_LLBit 0x60
+#define CSR_TID 0x40
+#define CSR_TCFG 0x41
+#define CSR_TVAL 0x42
+#define CSR_CNTC 0x43
+#define CSR_TICLR 0x44
+#define CSR_LLBCTL 0x60
 #define CSR_GSConfig 0x80
 #define CSR_ERRCTL 0x90
 #define CSR_ERRINFO 0x91
@@ -95,137 +95,137 @@
 #define M_CSR_PRMD_PWE 0x8
 
 // 0x2
-#define S_CSR_CU_FPen 0
-#define S_CSR_CU_LSXen 1
-#define S_CSR_CU_LASXen 2
-#define S_CSR_CU_LBTen 3
+#define S_CSR_EUEN_FPen 0
+#define S_CSR_EUEN_LSXen 1
+#define S_CSR_EUEN_LASXen 2
+#define S_CSR_EUEN_LBTen 3
 
 // 0x3
-#define S_CSR_Config_DisRDT1 5
-#define S_CSR_Config_DisRDT2 6
-#define S_CSR_Config_DisRDT3 7
-#define S_CSR_Config_ALC0 12
-#define S_CSR_Config_ALC1 13
-#define S_CSR_Config_ALC2 14
-#define S_CSR_Config_ALC3 15
-#define W_CSR_Config_ALC0 1
-#define W_CSR_Config_ALC1 1
-#define W_CSR_Config_ALC2 1
-#define W_CSR_Config_ALC3 1
-#define M_CSR_Config_Short 0xf
-#define M_CSR_Config_ALC0 (((1 << W_CSR_Config_ALC0) - 1) << S_CSR_Config_ALC0)
-#define M_CSR_Config_ALC1 (((1 << W_CSR_Config_ALC1) - 1) << S_CSR_Config_ALC1)
-#define M_CSR_Config_ALC2 (((1 << W_CSR_Config_ALC2) - 1) << S_CSR_Config_ALC2)
-#define M_CSR_Config_ALC3 (((1 << W_CSR_Config_ALC3) - 1) << S_CSR_Config_ALC3)
-#define S_CSR_Config_NWP0 16
-#define S_CSR_Config_NWP1 17
-#define S_CSR_Config_NWP2 18
+#define S_CSR_MISC_DisRDT1 5
+#define S_CSR_MISC_DisRDT2 6
+#define S_CSR_MISC_DisRDT3 7
+#define S_CSR_MISC_ALC0 12
+#define S_CSR_MISC_ALC1 13
+#define S_CSR_MISC_ALC2 14
+#define S_CSR_MISC_ALC3 15
+#define W_CSR_MISC_ALC0 1
+#define W_CSR_MISC_ALC1 1
+#define W_CSR_MISC_ALC2 1
+#define W_CSR_MISC_ALC3 1
+#define M_CSR_MISC_Short 0xf
+#define M_CSR_MISC_ALC0 (((1 << W_CSR_MISC_ALC0) - 1) << S_CSR_MISC_ALC0)
+#define M_CSR_MISC_ALC1 (((1 << W_CSR_MISC_ALC1) - 1) << S_CSR_MISC_ALC1)
+#define M_CSR_MISC_ALC2 (((1 << W_CSR_MISC_ALC2) - 1) << S_CSR_MISC_ALC2)
+#define M_CSR_MISC_ALC3 (((1 << W_CSR_MISC_ALC3) - 1) << S_CSR_MISC_ALC3)
+#define S_CSR_MISC_NWP0 16
+#define S_CSR_MISC_NWP1 17
+#define S_CSR_MISC_NWP2 18
 
 // 0x4
-#define S_CSR_ExConfig_IM 0
-#define M_CSR_ExConfig_IM 0x1fff
-#define S_CSR_ExConfig_IM0 0
-#define S_CSR_ExConfig_IM1 1
-#define S_CSR_ExConfig_IM2 2
-#define S_CSR_ExConfig_IM3 3
-#define S_CSR_ExConfig_IM4 4
-#define S_CSR_ExConfig_IM5 5
-#define S_CSR_ExConfig_IM6 6
-#define S_CSR_ExConfig_IM7 7
-#define S_CSR_ExConfig_IM8 8
-#define S_CSR_ExConfig_IM9 9
-#define S_CSR_ExConfig_IM10 10
-#define S_CSR_ExConfig_IM11 11
-#define S_CSR_ExConfig_IM13 13
-#define S_CSR_ExConfig_IM12 12
-#define S_CSR_ExConfig_IM_SW0 0
-#define S_CSR_ExConfig_IM_SW1 1
-#define S_CSR_ExConfig_IM_HW0 2
-#define S_CSR_ExConfig_IM_HW1 3
-#define S_CSR_ExConfig_IM_HW2 4
-#define S_CSR_ExConfig_IM_HW3 5
-#define S_CSR_ExConfig_IM_HW4 6
-#define S_CSR_ExConfig_IM_HW5 7
-#define S_CSR_ExConfig_IM_HW6 8
-#define S_CSR_ExConfig_IM_HW7 9
-#define S_CSR_ExConfig_IM_PCOV 10
-#define S_CSR_ExConfig_IM_TI 11
-#define S_CSR_ExConfig_IM_IPI 12
-#define S_CSR_ExConfig_IM_NMI 13
+#define S_CSR_ECFG_IM 0
+#define M_CSR_ECFG_IM 0x1fff
+#define S_CSR_ECFG_IM0 0
+#define S_CSR_ECFG_IM1 1
+#define S_CSR_ECFG_IM2 2
+#define S_CSR_ECFG_IM3 3
+#define S_CSR_ECFG_IM4 4
+#define S_CSR_ECFG_IM5 5
+#define S_CSR_ECFG_IM6 6
+#define S_CSR_ECFG_IM7 7
+#define S_CSR_ECFG_IM8 8
+#define S_CSR_ECFG_IM9 9
+#define S_CSR_ECFG_IM10 10
+#define S_CSR_ECFG_IM11 11
+#define S_CSR_ECFG_IM13 13
+#define S_CSR_ECFG_IM12 12
+#define S_CSR_ECFG_IM_SW0 0
+#define S_CSR_ECFG_IM_SW1 1
+#define S_CSR_ECFG_IM_HW0 2
+#define S_CSR_ECFG_IM_HW1 3
+#define S_CSR_ECFG_IM_HW2 4
+#define S_CSR_ECFG_IM_HW3 5
+#define S_CSR_ECFG_IM_HW4 6
+#define S_CSR_ECFG_IM_HW5 7
+#define S_CSR_ECFG_IM_HW6 8
+#define S_CSR_ECFG_IM_HW7 9
+#define S_CSR_ECFG_IM_PCOV 10
+#define S_CSR_ECFG_IM_TI 11
+#define S_CSR_ECFG_IM_IPI 12
+#define S_CSR_ECFG_IM_NMI 13
 
-#define S_CSR_ExConfig_VS 16
-#define W_CSR_ExConfig_VS 3
-#define M_CSR_ExConfig_VS (((1 << W_CSR_ExConfig_VS) - 1) << S_CSR_ExConfig_VS)
+#define S_CSR_ECFG_VS 16
+#define W_CSR_ECFG_VS 3
+#define M_CSR_ECFG_VS (((1 << W_CSR_ECFG_VS) - 1) << S_CSR_ECFG_VS)
 
-// 0x5 CSR_ExStatus
-#define S_CSR_ExStatus_IS 0
-#define W_CSR_ExStatus_IS 15
-#define M_CSR_ExStatus_IS (((1 << W_CSR_ExStatus_IS) - 1) << S_CSR_ExStatus_IS)
-#define S_CSR_ExStatus_IS0 0
-#define M_CSR_ExStatus_IS0 (1 << S_CSR_ExStatus_IS0)
-#define S_CSR_ExStatus_IS1 1
-#define M_CSR_ExStatus_IS1 (1 << S_CSR_ExStatus_IS1)
-#define S_CSR_ExStatus_IS2 2
-#define M_CSR_ExStatus_IS2 (1 << S_CSR_ExStatus_IS2)
-#define S_CSR_ExStatus_IS3 3
-#define M_CSR_ExStatus_IS3 (1 << S_CSR_ExStatus_IS3)
-#define S_CSR_ExStatus_IS4 4
-#define M_CSR_ExStatus_IS4 (1 << S_CSR_ExStatus_IS4)
-#define S_CSR_ExStatus_IS5 5
-#define M_CSR_ExStatus_IS5 (1 << S_CSR_ExStatus_IS5)
-#define S_CSR_ExStatus_IS6 6
-#define M_CSR_ExStatus_IS6 (1 << S_CSR_ExStatus_IS6)
-#define S_CSR_ExStatus_IS7 7
-#define M_CSR_ExStatus_IS7 (1 << S_CSR_ExStatus_IS7)
-#define S_CSR_ExStatus_IS8 8
-#define M_CSR_ExStatus_IS8 (1 << S_CSR_ExStatus_IS8)
-#define S_CSR_ExStatus_IS9 9
-#define M_CSR_ExStatus_IS9 (1 << S_CSR_ExStatus_IS9)
-#define S_CSR_ExStatus_IS10 10
-#define M_CSR_ExStatus_IS10 (1 << S_CSR_ExStatus_IS10)
-#define S_CSR_ExStatus_IS11 11
-#define M_CSR_ExStatus_IS11 (1 << S_CSR_ExStatus_IS11)
-#define S_CSR_ExStatus_IS12 12
-#define M_CSR_ExStatus_IS12 (1 << S_CSR_ExStatus_IS12)
-#define S_CSR_ExStatus_IS13 13
-#define M_CSR_ExStatus_IS13 (1 << S_CSR_ExStatus_IS13)
-#define S_CSR_ExStatus_SW0 0
-#define M_CSR_ExStatus_SW0 (1 << S_CSR_ExStatus_SW0)
-#define S_CSR_ExStatus_SW1 1
-#define M_CSR_ExStatus_SW1 (1 << S_CSR_ExStatus_SW1)
-#define S_CSR_ExStatus_HW0 2
-#define M_CSR_ExStatus_HW0 (1 << S_CSR_ExStatus_HW0)
-#define S_CSR_ExStatus_HW1 3
-#define M_CSR_ExStatus_HW1 (1 << S_CSR_ExStatus_HW1)
-#define S_CSR_ExStatus_HW2 4
-#define M_CSR_ExStatus_HW2 (1 << S_CSR_ExStatus_HW2)
-#define S_CSR_ExStatus_HW3 5
-#define M_CSR_ExStatus_HW3 (1 << S_CSR_ExStatus_HW3)
-#define S_CSR_ExStatus_HW4 6
-#define M_CSR_ExStatus_HW4 (1 << S_CSR_ExStatus_HW4)
-#define S_CSR_ExStatus_HW5 7
-#define M_CSR_ExStatus_HW5 (1 << S_CSR_ExStatus_HW5)
-#define S_CSR_ExStatus_HW6 8
-#define M_CSR_ExStatus_HW6 (1 << S_CSR_ExStatus_HW6)
-#define S_CSR_ExStatus_HW7 9
-#define M_CSR_ExStatus_HW7 (1 << S_CSR_ExStatus_HW7)
-#define S_CSR_ExStatus_PCOV 10
-#define M_CSR_ExStatus_PCOV (1 << S_CSR_ExStatus_PCOV)
-#define S_CSR_ExStatus_TI 11
-#define M_CSR_ExStatus_TI (1 << S_CSR_ExStatus_TI)
-#define S_CSR_ExStatus_IPI 12
-#define M_CSR_ExStatus_IPI (1 << S_CSR_ExStatus_IPI)
-#define S_CSR_ExStatus_NMI 13
-#define M_CSR_ExStatus_NMI (1 << S_CSR_ExStatus_NMI)
+// 0x5 CSR_ESTAT
+#define S_CSR_ESTAT_IS 0
+#define W_CSR_ESTAT_IS 15
+#define M_CSR_ESTAT_IS (((1 << W_CSR_ESTAT_IS) - 1) << S_CSR_ESTAT_IS)
+#define S_CSR_ESTAT_IS0 0
+#define M_CSR_ESTAT_IS0 (1 << S_CSR_ESTAT_IS0)
+#define S_CSR_ESTAT_IS1 1
+#define M_CSR_ESTAT_IS1 (1 << S_CSR_ESTAT_IS1)
+#define S_CSR_ESTAT_IS2 2
+#define M_CSR_ESTAT_IS2 (1 << S_CSR_ESTAT_IS2)
+#define S_CSR_ESTAT_IS3 3
+#define M_CSR_ESTAT_IS3 (1 << S_CSR_ESTAT_IS3)
+#define S_CSR_ESTAT_IS4 4
+#define M_CSR_ESTAT_IS4 (1 << S_CSR_ESTAT_IS4)
+#define S_CSR_ESTAT_IS5 5
+#define M_CSR_ESTAT_IS5 (1 << S_CSR_ESTAT_IS5)
+#define S_CSR_ESTAT_IS6 6
+#define M_CSR_ESTAT_IS6 (1 << S_CSR_ESTAT_IS6)
+#define S_CSR_ESTAT_IS7 7
+#define M_CSR_ESTAT_IS7 (1 << S_CSR_ESTAT_IS7)
+#define S_CSR_ESTAT_IS8 8
+#define M_CSR_ESTAT_IS8 (1 << S_CSR_ESTAT_IS8)
+#define S_CSR_ESTAT_IS9 9
+#define M_CSR_ESTAT_IS9 (1 << S_CSR_ESTAT_IS9)
+#define S_CSR_ESTAT_IS10 10
+#define M_CSR_ESTAT_IS10 (1 << S_CSR_ESTAT_IS10)
+#define S_CSR_ESTAT_IS11 11
+#define M_CSR_ESTAT_IS11 (1 << S_CSR_ESTAT_IS11)
+#define S_CSR_ESTAT_IS12 12
+#define M_CSR_ESTAT_IS12 (1 << S_CSR_ESTAT_IS12)
+#define S_CSR_ESTAT_IS13 13
+#define M_CSR_ESTAT_IS13 (1 << S_CSR_ESTAT_IS13)
+#define S_CSR_ESTAT_SW0 0
+#define M_CSR_ESTAT_SW0 (1 << S_CSR_ESTAT_SW0)
+#define S_CSR_ESTAT_SW1 1
+#define M_CSR_ESTAT_SW1 (1 << S_CSR_ESTAT_SW1)
+#define S_CSR_ESTAT_HW0 2
+#define M_CSR_ESTAT_HW0 (1 << S_CSR_ESTAT_HW0)
+#define S_CSR_ESTAT_HW1 3
+#define M_CSR_ESTAT_HW1 (1 << S_CSR_ESTAT_HW1)
+#define S_CSR_ESTAT_HW2 4
+#define M_CSR_ESTAT_HW2 (1 << S_CSR_ESTAT_HW2)
+#define S_CSR_ESTAT_HW3 5
+#define M_CSR_ESTAT_HW3 (1 << S_CSR_ESTAT_HW3)
+#define S_CSR_ESTAT_HW4 6
+#define M_CSR_ESTAT_HW4 (1 << S_CSR_ESTAT_HW4)
+#define S_CSR_ESTAT_HW5 7
+#define M_CSR_ESTAT_HW5 (1 << S_CSR_ESTAT_HW5)
+#define S_CSR_ESTAT_HW6 8
+#define M_CSR_ESTAT_HW6 (1 << S_CSR_ESTAT_HW6)
+#define S_CSR_ESTAT_HW7 9
+#define M_CSR_ESTAT_HW7 (1 << S_CSR_ESTAT_HW7)
+#define S_CSR_ESTAT_PCOV 10
+#define M_CSR_ESTAT_PCOV (1 << S_CSR_ESTAT_PCOV)
+#define S_CSR_ESTAT_TI 11
+#define M_CSR_ESTAT_TI (1 << S_CSR_ESTAT_TI)
+#define S_CSR_ESTAT_IPI 12
+#define M_CSR_ESTAT_IPI (1 << S_CSR_ESTAT_IPI)
+#define S_CSR_ESTAT_NMI 13
+#define M_CSR_ESTAT_NMI (1 << S_CSR_ESTAT_NMI)
 
-#define S_CSR_ExStatus_Ecode 16
-#define W_CSR_ExStatus_Ecode 6
-#define M_CSR_ExStatus_Ecode \
-  (((1 << W_CSR_ExStatus_Ecode) - 1) << S_CSR_ExStatus_Ecode)
-#define S_CSR_ExStatus_EsubCode 22
-#define W_CSR_ExStatus_EsubCode 9
-#define M_CSR_ExStatus_EsubCode \
-  (((1 << W_CSR_ExStatus_EsubCode) - 1) << S_CSR_ExStatus_EsubCode)
+#define S_CSR_ESTAT_Ecode 16
+#define W_CSR_ESTAT_Ecode 6
+#define M_CSR_ESTAT_Ecode \
+  (((1 << W_CSR_ESTAT_Ecode) - 1) << S_CSR_ESTAT_Ecode)
+#define S_CSR_ESTAT_EsubCode 22
+#define W_CSR_ESTAT_EsubCode 9
+#define M_CSR_ESTAT_EsubCode \
+  (((1 << W_CSR_ESTAT_EsubCode) - 1) << S_CSR_ESTAT_EsubCode)
 
 // 0x10 CSR_TLBIDX
 #define S_CSR_TLBIDX_INDEX 0
@@ -273,9 +273,9 @@
 #define W_CSR_ASID_ASID 10
 #define M_CSR_ASID_ASID (((1 << W_CSR_ASID_ASID) - 1) << S_CSR_ASID_ASID)
 
-// 0x41 CSR_TimerConfig
-#define S_CSR_TimerConfig_En 0
-#define S_CSR_TimerConfig_Period 1
+// 0x41 CSR_TCFG
+#define S_CSR_TCFG_En 0
+#define S_CSR_TCFG_Period 1
 
 // 0x50 CSR_GuestInfo
 #define S_CSR_GuestInfo_PVM 1
@@ -292,9 +292,9 @@
 #define M_CSR_GuestConfig_GPERFNum 0x7000000
 
 // 0x60
-#define S_CSR_LLBit_ROLLB 0
-#define S_CSR_LLBit_WCLLB 1
-#define S_CSR_LLBit_KLO 2
+#define S_CSR_LLBCTL_ROLLB 0
+#define S_CSR_LLBCTL_WCLLB 1
+#define S_CSR_LLBCTL_KLO 2
 
 // 0x80 CSR_GSConfig
 #define S_CSR_GSConfig_Stfill 8
