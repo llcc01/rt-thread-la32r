@@ -9,12 +9,17 @@
 #define CSR_ESTAT 0x5
 #define CSR_ERA 0x6
 #define CSR_BADV 0x7
+#define CSR_BADI 0x8
 #define csr_EENTRY 0xc
 #define CSR_ASID 0x18
-#define CSR_CPUN 0x20
-#define CSR_MISC1 0x21
-#define CSR_KScratch0 0x30
-#define CSR_KScratch1 0x31
+#define CSR_CPUID 0x20
+#define CSR_PRCFG1 0x21
+
+#define CSR_SAVE0 0x30 // save t0
+#define CSR_SAVE1 0x31 // save t1
+// #define CSR_SAVE2 0x32 // save kernel sp
+// #define CSR_SAVE3 0x33
+
 #define CSR_TID 0x40
 #define CSR_TCFG 0x41
 #define CSR_TVAL 0x42

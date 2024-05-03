@@ -1,7 +1,10 @@
+#define __ASSEMBLY__
+
 #include "regdef.h"
 #include "csrdef.h"
 #include "start.h"
 #include "rtconfig.h"
+
 
 
 .globl _RAM1
@@ -42,14 +45,14 @@ LoopFillZerobss:
 cpu_init_start:
 // reset normal exception base and Ex config
         la.abs    t0, general_exception
-        csrwr     t0, CSR_EBase
+        csrwr     t0, csr_EENTRY
 
-        li.w      t0, (0<<S_CSR_ExConfig_VS)|(0x0000<<S_CSR_ExConfig_IM) // 4 instruction gap
-        csrwr     t0, CSR_ExConfig
+        li.w      t0, (0<<S_CSR_ECFG_VS)|(0x0000<<S_CSR_ECFG_IM) // 4 instruction gap
+        csrwr     t0, CSR_ECFG
 
         // set int masks
         li.w      t0, 0x1fff
-        csrxchg t0, t0, CSR_ExConfig
+        csrxchg t0, t0, CSR_ECFG
 
     // set VSEG4(0x80000000~0x9fffffff) to cached, other VSEG to uncached
         li.w      t0, CACHE_OP
@@ -63,8 +66,9 @@ cpu_init_start:
         li.w      t0, 0x8
         csrxchg   zero, t0, CSR_CRMD
 
-
         la.abs     sp, _system_stack
+
+        move     x0, zero
 
 	    // bl      main
         /* jump to RT-Thread kernel */
@@ -82,7 +86,7 @@ cpu_wait:
 //             .org 0x1000
 // DEFAULT_INT_HANDLER:
 // 	SAVE_REGS_FAST(REGS_MEM)
-//         csrrd   t0, CSR_ExStatus
+//         csrrd   t0, CSR_ESTAT
 //         andi    t1, t0, INT_VECTOR # t1 = t0 & 0b1011_1011_1100
 //         beqz    t1, exception_core_check
 // exception_pmu:

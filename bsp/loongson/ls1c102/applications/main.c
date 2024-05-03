@@ -22,21 +22,30 @@
  * 2018-05-10     zhuangwei    first version
  */
 
-#include <rtthread.h>
 #include <rtdevice.h>
+#include <rtthread.h>
+
+#include "csrdef.h"
 #include "drv_uart.h"
 
-
 int main(int argc, char** argv) {
+  // rt_hw_interrupt_enable(M_CSR_CRMD_IE);
+  // my_delay_ms(1000);
+
   rt_pin_mode(1, PIN_MODE_OUTPUT);
 
   rt_kprintf("Hello, RT-Thread!\n");
 
+
   while (1) {
+    // rt_kprintf("tick: %d\n", rt_tick_get());
+
     rt_pin_write(1, PIN_HIGH);
-    my_delay_ms(500);
+    // my_delay_ms(500);
+    rt_thread_mdelay(500);
     rt_pin_write(1, PIN_LOW);
-    my_delay_ms(500);
+    // my_delay_ms(500);
+    rt_thread_mdelay(500);
   }
   return 0;
 }

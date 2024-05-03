@@ -19,6 +19,4 @@
 
 void rt_hw_board_init(void);
 
-#define LA_TIMER (8 * 10000) // 1.25ms
-
 #endif

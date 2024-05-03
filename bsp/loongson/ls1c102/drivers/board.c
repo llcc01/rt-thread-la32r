@@ -19,52 +19,29 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-#include "drv_uart.h"
 #include "drv_pin.h"
+#include "drv_uart.h"
+#include "drv_timer.h"
 #include "exception.h"
 // #include "ls1x.h"
 // #include "ls1x_common.h"
-// #include "soc_gpio.h"
-#include "timer.h"
+#include "soc_gpio.h"
+
 
 extern unsigned int _system_heap;
 extern unsigned int _system_heap_end;
 
 /**
- * @addtogroup Loongson LS1B
- */
-
-/*@{*/
-
-/**
- * This is the timer interrupt service routine.
- */
-void rt_hw_timer_handler(void) {
-  Set_Timer_clear();
-  Set_Timer_Init(LA_TIMER);  //  1.25ms
-  /* increase a OS tick */
-  rt_tick_increase();
-}
-
-/**
- * This function will initial OS timer
- */
-int rt_hw_timer_init(void) {
-  Set_Timer_Init(LA_TIMER);  //  1.25ms]
-  return 0;
-}
-
-/**
  * This function will initial board.
  */
 void rt_hw_board_init(void) {
-  rt_hw_interrupt_enable(0);
+  // rt_hw_interrupt_enable(0);
 
   // gpio_init(0, LA_GPIO_OUTPUT);
   // gpio_init(1, LA_GPIO_OUTPUT);
   // gpio_init(2, LA_GPIO_OUTPUT);
   // gpio_init(3, LA_GPIO_OUTPUT);
-  // gpio_init(4, LA_GPIO_OUTPUT);
+  gpio_init(4, LA_GPIO_OUTPUT);
 
   // UART_FIFO_CTRL = 0x3;  // 115200
 
@@ -72,7 +49,7 @@ void rt_hw_board_init(void) {
   // gpio_write(1, 1);
   // gpio_write(2, 1);
   // gpio_write(3, 1);
-  // gpio_write(4, 1);
+  gpio_write(4, 1);
 
 #ifdef RT_USING_HEAP
   rt_system_heap_init((void *)&_system_heap, (void *)&_system_heap_end);
@@ -87,14 +64,13 @@ void rt_hw_board_init(void) {
   rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 
-  // rt_hw_timer_init();
-
   rt_hw_pin_init();
 
-// #ifdef RT_USING_COMPONENTS_INIT
-//   rt_components_board_init();
-// #endif
+  rt_hw_timer_init();
 
+  // #ifdef RT_USING_COMPONENTS_INIT
+  //   rt_components_board_init();
+  // #endif
 }
 
 /*@}*/

@@ -38,6 +38,8 @@
 #define REG_S7 30
 #define REG_S8 31
 
+#ifdef __ASSEMBLY__
+
 #define zero	$r0	/* wired zero */
 #define ra	$r1	/* return address */
 #define tp	$r2
@@ -72,5 +74,7 @@
 #define s6	$r29
 #define s7	$r30
 #define s8	$r31
+
+#endif /* __ASSEMBLY__ */
 
 #endif /* _ASM_REGDEF_H */

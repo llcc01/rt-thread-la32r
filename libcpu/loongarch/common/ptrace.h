@@ -19,7 +19,7 @@
 
 #ifndef __ASSEMBLY__
 
-#include <rtthread.h>
+// #include <rtthread.h>
 
 struct pt_regs {
 	/* Saved main processor registers. */
@@ -31,15 +31,15 @@ struct pt_regs {
 	unsigned long csr_euen;
 	unsigned long csr_ecfg;
 	unsigned long csr_estat;
-	unsigned long csr_epc;
-	unsigned long csr_badvaddr;
-	unsigned long orig_a0;
-	unsigned long __last[0];
+	unsigned long csr_era;
+	unsigned long csr_badv;
+	unsigned long last;
+	// unsigned long __last[0];
 } __attribute__((aligned(8)));
 
-#endif /* !__ASSEMBLY__ */
+#else
 
-#define PT_SIZE (LONGSIZE * (32+9))
+#define PT_SIZE (LONGSIZE * (32+8))
 
 #define PT_R0       (0 * LONGSIZE)    /* 0 */
 #define PT_R1       ((PT_R0) + LONGSIZE)    /* 1 */
@@ -79,9 +79,10 @@ struct pt_regs {
 #define PT_EUEN     ((PT_PRMD) + LONGSIZE)  /* 34 */
 #define PT_ECFG     ((PT_EUEN) + LONGSIZE)  /* 35 */
 #define PT_ESTAT    ((PT_ECFG) + LONGSIZE)  /* 36 */
-#define PT_EPC      ((PT_ESTAT) + LONGSIZE) /* 37 */
-#define PT_BADVADDR ((PT_EPC) + LONGSIZE)   /* 38 */
-#define PT_ORIG_A0  ((PT_BADVADDR) + LONGSIZE) /* 39 */
+#define PT_ERA      ((PT_ESTAT) + LONGSIZE) /* 37 */
+#define PT_BADV ((PT_ERA) + LONGSIZE)   /* 38 */
+#define PT_LAST  ((PT_BADV) + LONGSIZE) /* 39 */
 
+#endif /* __ASSEMBLY__ */
 
 #endif /* _UAPI_ASM_PTRACE_H */

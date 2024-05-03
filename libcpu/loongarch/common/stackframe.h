@@ -22,13 +22,13 @@
 	.endm
 
 	.macro BACKUP_T0T1
-	csrwr	t0, CSR_KScratch0
-	csrwr	t1, CSR_KScratch1
+	csrwr	t0, CSR_SAVE0
+	csrwr	t1, CSR_SAVE1
 	.endm
 
 	.macro RELOAD_T0T1
-	csrrd   t0, CSR_KScratch0
-	csrrd   t1, CSR_KScratch1
+	csrrd   t0, CSR_SAVE0
+	csrrd   t1, CSR_SAVE1
 	.endm
 
 	.macro	SAVE_TEMP
@@ -104,15 +104,23 @@
 	move	t0, sp
 	PTR_ADDIU sp, sp, -PT_SIZE
 	cfi_st	t0, PT_R3
-	LONG_S	zero, sp, PT_R0
-	csrrd	t0, CSR_PRMD
-	LONG_S	t0, sp, PT_PRMD
+	cfi_st	zero, PT_R0
+
 	csrrd	t0, CSR_CRMD
-	LONG_S	t0, sp, PT_CRMD
-	csrrd	t0, CSR_ExConfig
-	LONG_S	t0, sp, PT_ECFG
-	csrrd	t0, CSR_CU
-	LONG_S  t0, sp, PT_EUEN
+	cfi_st	t0, PT_CRMD
+	csrrd	t0, CSR_PRMD
+	cfi_st	t0, PT_PRMD
+	csrrd	t0, CSR_EUEN
+	cfi_st  t0, PT_EUEN
+	csrrd	t0, CSR_ECFG
+	cfi_st	t0, PT_ECFG
+	csrrd   t0, CSR_ESTAT
+	cfi_st	t0, PT_ESTAT
+	csrrd   t0, CSR_ERA
+	cfi_st	t0, PT_ERA
+	csrrd   t0, CSR_BADV
+	cfi_st	t0, PT_BADV
+
 	cfi_st	ra, PT_R1
 	cfi_st	a0, PT_R4
 	cfi_st	a1, PT_R5
@@ -122,8 +130,6 @@
 	cfi_st	a5, PT_R9
 	cfi_st	a6, PT_R10
 	cfi_st	a7, PT_R11
-	csrrd	ra, CSR_EPC
-	LONG_S	ra, sp, PT_EPC
 	cfi_st	tp, PT_R2
 	cfi_st  x0, PT_R21
 	cfi_st	fp, PT_R22
@@ -159,11 +165,16 @@
 	cfi_ld	s8, PT_R31
 	.endm
 
-	.macro	RESTORE_SOME
-	LONG_L	v0, sp, PT_PRMD
-	csrwr	v0, CSR_PRMD
-	LONG_L	v0, sp, PT_EPC
-	csrwr	v0, CSR_EPC
+	.macro	RESTORE_SOME prmd=0 ksp=0
+
+	.if \prmd
+	cfi_ld	t0, PT_PRMD
+	csrwr	t0, CSR_PRMD
+	.endif
+
+	cfi_ld	t0, PT_ERA
+	csrwr	t0, CSR_ERA
+
 	cfi_ld	ra, PT_R1
 	cfi_ld	a0, PT_R4
 	cfi_ld	a1, PT_R5
@@ -174,7 +185,11 @@
 	cfi_ld	a6, PT_R10
 	cfi_ld	a7, PT_R11
 	cfi_ld	tp, PT_R2
+
+	.if \ksp
 	cfi_ld  x0, PT_R21
+	.endif
+
 	cfi_ld	fp, PT_R22
 	.endm
 
@@ -187,36 +202,36 @@
 	ertn
 	.endm
 
-	.macro	RESTORE_ALL
-	RESTORE_TEMP
+	.macro	RESTORE_ALL prmd=0 ksp=0
+	RESTORE_SOME \prmd \ksp
 	RESTORE_STATIC
-	RESTORE_SOME
+	RESTORE_TEMP
 	RESTORE_SP
 	.endm
 
-	.macro	RESTORE_ALL_AND_RET
-	RESTORE_ALL
+	.macro	RESTORE_ALL_AND_RET prmd=0 ksp=0
+	RESTORE_ALL \prmd \ksp
 	ertn
 	.endm
 
-/* Move to kernel mode and disable interrupts. */
-	.macro	CLI
-	li.w	t0, 0x7
-	csrxchg	zero, t0, CSR_CRMD
-	csrrd	x0, PERCPU_BASE_KS
-	.endm
+// /* Move to kernel mode and disable interrupts. */
+// 	.macro	CLI
+// 	li.w	t0, 0x7
+// 	csrxchg	zero, t0, CSR_CRMD
+// 	csrrd	x0, PERCPU_BASE_KS
+// 	.endm
 
-/* Move to kernel mode and enable interrupts. */
-	.macro	STI
-	li.w	t0, 0x7
-	li.w	t1, (1 << 2)
-	csrxchg	t1, t0, CSR_CRMD
-	csrrd	x0, PERCPU_BASE_KS
-	.endm
+// /* Move to kernel mode and enable interrupts. */
+// 	.macro	STI
+// 	li.w	t0, 0x7
+// 	li.w	t1, (1 << 2)
+// 	csrxchg	t1, t0, CSR_CRMD
+// 	csrrd	x0, PERCPU_BASE_KS
+// 	.endm
 
-/* Just move to kernel mode and leave interrupts as they are. */
-	.macro	KMODE
-	csrrd	x0, PERCPU_BASE_KS
-	.endm
+// /* Just move to kernel mode and leave interrupts as they are. */
+// 	.macro	KMODE
+// 	csrrd	x0, PERCPU_BASE_KS
+// 	.endm
 
 #endif /* _ASM_STACKFRAME_H */

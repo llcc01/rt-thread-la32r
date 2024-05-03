@@ -100,7 +100,7 @@ SECTIONS
     {
         . = ALIGN(16);
         _system_stack_start = .;
-        . = . + 0x400; /* 1kb system stack */
+        . = . + 0x600; /* 1.5kb system stack */
         _system_stack = .;
     } > dram1
 
