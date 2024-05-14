@@ -25,7 +25,6 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter, rt_uint8_t *stack_ad
 
     /* Get stack aligned */
     stk = (rt_uint8_t *)RT_ALIGN_DOWN((rt_ubase_t)stack_addr, 8);
-    rt_kprintf("stk: %p\n", stk);
     stk -= sizeof(struct pt_regs);
     pt =  (struct pt_regs*)stk;
 
