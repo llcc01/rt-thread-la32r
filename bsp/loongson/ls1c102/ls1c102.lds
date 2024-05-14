@@ -108,7 +108,7 @@ SECTIONS
     {
         . = ALIGN(16);
         _system_heap = .;
-        . = . + 0xc00; /* 3.5kb system heap */
+        . = . + 0x1000; /* 4kb system heap */
         _system_heap_end = .;
     } > dram2
 
