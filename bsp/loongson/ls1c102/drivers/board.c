@@ -19,14 +19,14 @@
 #include <rthw.h>
 #include <rtthread.h>
 
+#include "drv_intc.h"
 #include "drv_pin.h"
-#include "drv_uart.h"
 #include "drv_timer.h"
+#include "drv_uart.h"
 #include "exception.h"
 // #include "ls1x.h"
 // #include "ls1x_common.h"
 #include "soc_gpio.h"
-
 
 extern unsigned int _system_heap;
 extern unsigned int _system_heap_end;
@@ -57,11 +57,13 @@ void rt_hw_board_init(void) {
 
   rt_hw_interrupt_init();
 
+  rt_hw_intc_init();
+
   rt_hw_uart_init();
 
 #ifdef RT_USING_CONSOLE
-  /* set console device */
-  rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+      /* set console device */
+      rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 
   rt_hw_pin_init();

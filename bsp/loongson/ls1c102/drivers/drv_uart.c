@@ -12,10 +12,15 @@
 #include <rtthread.h>
 // #include "ls1c102_irq.h"
 
+#include "drv_intc.h"
 #include "drv_uart.h"
 
 struct rt_uart_ls1x {
   rt_uint32_t IRQ;
+};
+
+struct rt_uart_ls1x uart1 = {
+    UART_IRQ,
 };
 
 void uart_putc(char c) {
@@ -27,8 +32,8 @@ void uart_putc(char c) {
 
 char uart_getc(void) {
   char c;
-  while (!(UART_FIFO_CTRL & 0x1)) {
-    ;
+  if ((UART_FIFO_CTRL & 0x1)) {
+    return -1;
   }
   c = UART_FIFO;
   return c;
@@ -85,13 +90,13 @@ static rt_err_t ls1x_uart_control(struct rt_serial_device *serial, int cmd,
   uart_dev = (struct rt_uart_ls1x *)serial->parent.user_data;
 
   switch (cmd) {
-    // case RT_DEVICE_CTRL_CLR_INT: /* disable rx irq */
-    //   rt_hw_interrupt_mask(uart_dev->IRQ);
-    //   break;
+    case RT_DEVICE_CTRL_CLR_INT: /* disable rx irq */
+      rt_hw_intc_interrupt_mask(uart_dev->IRQ);
+      break;
 
-    // case RT_DEVICE_CTRL_SET_INT: /* enable rx irq */
-    //   rt_hw_interrupt_umask(uart_dev->IRQ);
-    //   break;
+    case RT_DEVICE_CTRL_SET_INT: /* enable rx irq */
+      rt_hw_intc_interrupt_umask(uart_dev->IRQ);
+      break;
 
     default:
       break;
@@ -123,23 +128,18 @@ static int ls1x_uart_getc(struct rt_serial_device *serial) {
 }
 
 /* UART interrupt handler */
-// static void uart_irq_handler(int vector, void *param) {
-//   struct rt_serial_device *serial = (struct rt_serial_device *)param;
-//   struct rt_uart_ls1x *uart_dev = RT_NULL;
+static void uart_irq_handler(int vector, void *param) {
+  struct rt_serial_device *serial = (struct rt_serial_device *)param;
+  struct rt_uart_ls1x *uart_dev = RT_NULL;
 
-//   RT_ASSERT(serial != RT_NULL);
+  RT_ASSERT(serial != RT_NULL);
 
-//   uart_dev = (struct rt_uart_ls1x *)serial->parent.user_data;
-//   void *uart_base = uart_get_base(uart_dev->UARTx);
-//   unsigned char iir = reg_read_8(uart_base + LS1B_UART_IIR_OFFSET);
+  uart_dev = (struct rt_uart_ls1x *)serial->parent.user_data;
 
-//   // 判断是否为接收超时或接收到有效数据
-//   if ((IIR_RXTOUT & iir) || (IIR_RXRDY & iir)) {
-//     rt_interrupt_enter();
-//     rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
-//     rt_interrupt_leave();
-//   }
-// }
+  rt_interrupt_enter();
+  rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
+  rt_interrupt_leave();
+}
 
 static const struct rt_uart_ops ls1x_uart_ops = {
     ls1x_uart_configure,
@@ -156,13 +156,12 @@ int rt_hw_uart_init(void) {
   serial1.ops = &ls1x_uart_ops;
   serial1.config = config;
 
-  // rt_hw_interrupt_install(uart->IRQ, uart_irq_handler, &serial1, "UART1");
+  rt_hw_intc_interrupt_install(UART_IRQ, uart_irq_handler, &serial1, "UART1");
 
   /* register UART1 device */
   rt_hw_serial_register(
       &serial1, "uart1",
       // RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_DMA_RX,
-      // RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
-      RT_DEVICE_FLAG_RDWR, NULL);
+      RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX, &uart1);
   return 0;
 }

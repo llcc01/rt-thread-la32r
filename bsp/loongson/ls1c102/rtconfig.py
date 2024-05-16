@@ -23,7 +23,8 @@ else:
 if os.getenv('RTT_EXEC_PATH'):
 	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
-BUILD       = 'debug'
+# BUILD       = 'debug'
+BUILD       = 'release'
 
 PREFIX = 'loongarch32-linux-gnu-'
 # PREFIX = 'loongarch32r-linux-gnusf-'
@@ -39,7 +40,8 @@ OBJCPY = PREFIX + 'objcopy'
 READELF = PREFIX + 'readelf'
 
 DEVICE = ' -msoft-float'
-CFLAGS = DEVICE + ' -D_GNU_SOURCE -D_TIMEVAL_DEFINED -fno-builtin -ffunction-sections -fdata-sections -fno-exceptions -fomit-frame-pointer'
+# CFLAGS = DEVICE + ' -D_GNU_SOURCE -D_TIMEVAL_DEFINED -fno-builtin -ffunction-sections -fdata-sections -fno-exceptions -fomit-frame-pointer'
+CFLAGS = DEVICE + ' -D_GNU_SOURCE -D_TIMEVAL_DEFINED -fno-builtin -ffunction-sections -fdata-sections -fno-exceptions'
 AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
 LFLAGS = ' -nostartfiles -static -Wl,--gc-sections,-Map=rtthread.map -T ls1c102.lds'
 # LFLAGS = '-Map=rtthread.map -T ls1c102.lds --gc-sections'

@@ -29,35 +29,14 @@
 #include "csrdef.h"
 #include "drv_uart.h"
 
+#define HDMI_RES *(volatile int*)0xbfe80000
+
 void thread2_entry(void* parameter) {
-  while (1) {
-    rt_kprintf("tick: %d\n", rt_tick_get());
-    OLED_Print_Num(0, 2, rt_tick_get());
-    rt_thread_mdelay(50);
-  }
-}
-
-int main(int argc, char** argv) {
-  I2C_InitTypeDef I2C_InitStruct0;
-  soc_I2C_StructInit(&I2C_InitStruct0);
-  soc_I2C_Init(&I2C_InitStruct0);
-
-  OLED_Init();
-
-  OLED_P8x16Str(0, 0, "RT-Thread!");
-
-  rt_pin_mode(1, PIN_MODE_OUTPUT);
-
-  rt_kprintf("Hello, RT-Thread!\n");
-
-  rt_thread_t id = rt_thread_create("uart", thread2_entry, RT_NULL, 1024,
-                                    RT_MAIN_THREAD_PRIORITY, 10);
-  if (id != RT_NULL) {
-    rt_thread_startup(id);
-  } else {
-    rt_kprintf("Failed to create thread\n");
-  }
-
+  // while (1) {
+  //   rt_kprintf("tick: %d\n", rt_tick_get());
+  //   OLED_Print_Num(0, 2, rt_tick_get());
+  //   rt_thread_mdelay(50);
+  // }
   while (1) {
     // rt_kprintf("tick: %d\n", rt_tick_get());
 
@@ -68,5 +47,39 @@ int main(int argc, char** argv) {
     // my_delay_ms(500);
     rt_thread_mdelay(100);
   }
+}
+
+int main(int argc, char** argv) {
+  // I2C_InitTypeDef I2C_InitStruct0;
+  // soc_I2C_StructInit(&I2C_InitStruct0);
+  // soc_I2C_Init(&I2C_InitStruct0);
+
+  // OLED_Init();
+
+  // OLED_P8x16Str(0, 0, "RT-Thread!");
+
+  // rt_pin_mode(1, PIN_MODE_OUTPUT);
+
+  rt_kprintf("Hello, RT-Thread!\n");
+
+  // rt_thread_t id = rt_thread_create("uart", thread2_entry, RT_NULL, 1024,
+  //                                   RT_MAIN_THREAD_PRIORITY, 10);
+  // if (id != RT_NULL) {
+  //   rt_thread_startup(id);
+  // } else {
+  //   rt_kprintf("Failed to create thread\n");
+  // }
+
+  int i = 0;
+  while (1) {
+    rt_kprintf("HDMI_RES: %d\n", i);
+    HDMI_RES = i;
+    rt_thread_mdelay(5000);
+    i++;
+    if (i >= 3) {
+      i = 0;
+    }
+  }
+
   return 0;
 }

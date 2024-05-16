@@ -22,6 +22,8 @@
 #define UART_CTRL_115200 3
 #define UART_CTRL_PARITY 4
 
+#define UART_IRQ 2
+
 /*
     delay right.
 */

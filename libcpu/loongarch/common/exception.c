@@ -13,7 +13,7 @@
 #include "context.h"
 
 extern rt_ubase_t __eentry_start;
-struct rt_irq_desc irq_handle_table[RT_MAX_EXC + RT_MAX_INTR];
+struct rt_irq_desc irq_handle_table[RT_MAX_EXC + LA_MAX_INTR];
 
 rt_ubase_t rt_interrupt_from_thread;
 rt_ubase_t rt_interrupt_to_thread;
@@ -36,30 +36,19 @@ static void unhandled_interrupt_handler(int vector, void *param) {
 
 void rt_hw_interrupt_init(void) {
   int i;
-  // rt_base_t eentry = (rt_base_t)&__eentry_start;
 
-  // __builtin_loongarch_csrwr(0x0, CSR_ECFG);
-  // __builtin_loongarch_csrwr(eentry, csr_EENTRY);
-
-  // rt_hw_interrupt_enable(M_CSR_CRMD_IE);
-
-  // uart_putc('a');
-
-  for (i = 0; i < RT_MAX_EXC + RT_MAX_INTR; i++) {
+  for (i = 0; i < RT_MAX_EXC + LA_MAX_INTR; i++) {
     irq_handle_table[i].handler = unhandled_interrupt_handler;
     irq_handle_table[i].param = RT_NULL;
   }
 
-  // uart_putc('b');
-
-  // rt_hw_interrupt_enable(M_CSR_CRMD_IE);
 }
 
 rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
                                          void *param, const char *name) {
   rt_isr_handler_t old_handler = RT_NULL;
 
-  RT_ASSERT(vector >= 0 && vector < RT_MAX_EXC + RT_MAX_INTR);
+  RT_ASSERT(vector >= 0 && vector < RT_MAX_EXC + LA_MAX_INTR);
   old_handler = irq_handle_table[vector].handler;
 
 #ifdef RT_USING_INTERRUPT_INFO
@@ -76,7 +65,7 @@ static void handle_interrupt(rt_base_t exccode) {
   void *param;
   rt_isr_handler_t irq_func;
 
-  RT_ASSERT(exccode < RT_MAX_EXC + RT_MAX_INTR);
+  RT_ASSERT(exccode < RT_MAX_EXC + LA_MAX_INTR);
   irq_func = irq_handle_table[exccode].handler;
   param = irq_handle_table[exccode].param;
   irq_func(exccode, param);
@@ -214,12 +203,12 @@ void rt_hw_interrupt_enable(rt_base_t level) {
 }
 
 void rt_hw_interrupt_mask(int irq) {
-  RT_ASSERT(irq >= 0 && irq < RT_MAX_INTR);
+  RT_ASSERT(irq >= 0 && irq < LA_MAX_INTR);
   __builtin_loongarch_csrxchg(0 << irq, 1 << irq, CSR_ECFG);
 }
 
 void rt_hw_interrupt_umask(int irq) {
-  RT_ASSERT(irq >= 0 && irq < RT_MAX_INTR);
+  RT_ASSERT(irq >= 0 && irq < LA_MAX_INTR);
   __builtin_loongarch_csrxchg(1 << irq, 1 << irq, CSR_ECFG);
 }
 

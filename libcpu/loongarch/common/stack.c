@@ -35,6 +35,7 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter, rt_uint8_t *stack_ad
     }
 
     pt->regs[REG_SP] = (rt_ubase_t)stk;
+    pt->regs[REG_TP] = (rt_ubase_t)stk;
     pt->regs[REG_A0] = (rt_ubase_t)parameter;
     pt->regs[REG_FP] = (rt_ubase_t)0x0;
     pt->regs[REG_RA] = (rt_ubase_t)texit;

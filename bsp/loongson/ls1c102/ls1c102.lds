@@ -7,7 +7,7 @@ OUTPUT_ARCH(loongarch)
 ENTRY(_start)
 MEMORY
 {
-    flash(R) : ORIGIN = 0x1c000000, LENGTH = 128K
+    flash(R) : ORIGIN = 0x1c000000, LENGTH = 256K
     dram1(RW) : ORIGIN = _RAM1, LENGTH = 4K
     dram2(RW) : ORIGIN = _RAM2, LENGTH = 4K
 }
@@ -32,7 +32,7 @@ SECTIONS
         *(.rodata1.*)
 
         /* section information for finsh shell */
-        /* . = ALIGN(4);
+        . = ALIGN(4);
         __fsymtab_start = .;
         KEEP(*(FSymTab))
         __fsymtab_end = .;
@@ -42,6 +42,7 @@ SECTIONS
         __vsymtab_end = .;
         . = ALIGN(4);
 
+        /* 
         . = ALIGN(4);
         __rt_init_start = .;
         KEEP(*(SORT(.rti_fn*)))
@@ -100,7 +101,7 @@ SECTIONS
     {
         . = ALIGN(16);
         _system_stack_start = .;
-        . = . + 0x600; /* 1.5kb system stack */
+        . = . + 0x400; /* 1kb system stack */
         _system_stack = .;
     } > dram1
 

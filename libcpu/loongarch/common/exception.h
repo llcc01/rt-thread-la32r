@@ -4,7 +4,7 @@
 #include "csrdef.h"
 #include "ptrace.h"
 
-#define RT_MAX_INTR 13
+#define LA_MAX_INTR 13
 #define RT_MAX_EXC  64
 
 #define IRQ_TO_VECTOR(x) ((x) + RT_MAX_EXC)
