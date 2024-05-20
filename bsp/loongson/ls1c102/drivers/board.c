@@ -19,8 +19,12 @@
 #include <rthw.h>
 #include <rtthread.h>
 
+#include "drv_hdmi.h"
+#include "drv_i2c.h"
 #include "drv_intc.h"
 #include "drv_pin.h"
+#include "drv_pwm.h"
+#include "drv_spi.h"
 #include "drv_timer.h"
 #include "drv_uart.h"
 #include "exception.h"
@@ -62,13 +66,25 @@ void rt_hw_board_init(void) {
   rt_hw_uart_init();
 
 #ifdef RT_USING_CONSOLE
-      /* set console device */
-      rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+  /* set console device */
+  rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 
   rt_hw_pin_init();
 
   rt_hw_timer_init();
+
+#ifdef RT_USING_I2C
+  rt_hw_i2c_init();
+#endif
+
+#ifdef RT_USING_PWM
+  rt_hw_pwm_init();
+#endif
+
+#ifdef RT_USING_SPI
+  rt_hw_spi_init();
+#endif
 
   // #ifdef RT_USING_COMPONENTS_INIT
   //   rt_components_board_init();

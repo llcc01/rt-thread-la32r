@@ -9,6 +9,8 @@
 
 void hdmi_set_res(uint32_t res);
 void hdmi_set_mode(uint32_t mode);
-void hdmi_put_char(uint8_t c);
+void hdmi_putc(uint8_t c);
+
+int rt_hw_hdmi_term_init();
 
 #endif

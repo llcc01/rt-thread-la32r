@@ -8,8 +8,8 @@ ENTRY(_start)
 MEMORY
 {
     flash(R) : ORIGIN = 0x1c000000, LENGTH = 256K
-    dram1(RW) : ORIGIN = _RAM1, LENGTH = 4K
-    dram2(RW) : ORIGIN = _RAM2, LENGTH = 4K
+    dram1(RW) : ORIGIN = _RAM1, LENGTH = 8K
+    dram2(RW) : ORIGIN = _RAM2, LENGTH = 8K
 }
 SECTIONS
 {
@@ -42,7 +42,7 @@ SECTIONS
         __vsymtab_end = .;
         . = ALIGN(4);
 
-        /* 
+        
         . = ALIGN(4);
         __rt_init_start = .;
         KEEP(*(SORT(.rti_fn*)))
@@ -52,7 +52,7 @@ SECTIONS
         . = ALIGN(4);
         __rt_utest_tc_tab_start = .;
         KEEP(*(UtestTcTab))
-        __rt_utest_tc_tab_end = .; */
+        __rt_utest_tc_tab_end = .;
         . = ALIGN(16);
     } > flash
     
@@ -99,17 +99,17 @@ SECTIONS
 
     .stack :
     {
-        . = ALIGN(16);
+        . = ALIGN(8);
         _system_stack_start = .;
-        . = . + 0x400; /* 1kb system stack */
+        . = . + 0x800; /* 2kb system stack */
         _system_stack = .;
     } > dram1
 
     .heap :
     {
-        . = ALIGN(16);
+        . = ALIGN(8);
         _system_heap = .;
-        . = . + 0x1000; /* 4kb system heap */
+        . = . + 0x2000; /* 8kb system heap */
         _system_heap_end = .;
     } > dram2
 

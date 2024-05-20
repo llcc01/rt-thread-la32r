@@ -3,6 +3,7 @@
 #include <rtdevice.h>
 #include <rthw.h>
 #include <rtthread.h>
+#include <stdlib.h>
 
 void hdmi_set_res(uint32_t res) { HDMI_RES = res; }
 
@@ -34,3 +35,35 @@ int rt_hw_hdmi_term_init() {
 
   return 0;
 }
+
+static int cmd_hdmi(int argc, char *argv[]) {
+  char *arg1;
+  uint8_t arg2;
+  switch (argc) {
+    case 3:
+      arg1 = argv[1];
+      arg2 = strtoul(argv[2], NULL, 0);
+      if (strcmp(arg1, "res") == 0) {
+        hdmi_set_res(arg2);
+        break;
+      }
+      if (strcmp(arg1, "mode") == 0) {
+        hdmi_set_mode(arg2);
+        break;
+      }
+      if (strcmp(arg1, "term") == 0) {
+        char *p = argv[2];
+        while (*p) {
+          rt_hw_hdmi_putc(&hdmi_term, *p);
+          p++;
+        }
+        rt_hw_hdmi_putc(&hdmi_term, '\n');
+        
+        break;
+      }
+    default:
+      rt_kprintf("\nusage : cmd_hdmi CMD VALUE\n  CMD: res, mode, term\n");
+      break;
+  }
+}
+MSH_CMD_EXPORT(cmd_hdmi, cmd_hdmi);
