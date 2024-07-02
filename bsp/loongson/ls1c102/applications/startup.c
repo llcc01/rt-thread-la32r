@@ -39,14 +39,6 @@ int rtthread_startup(void)
     /* create init_thread */
     // rt_application_init();
 
-#ifdef RT_USING_FINSH
-	/* init the finsh input */
-	// rt_hw_finsh_init();
-
-	/* init finsh */
-	finsh_system_init();
-#endif
-
     /* timer thread initialization */
     rt_system_timer_thread_init();
 

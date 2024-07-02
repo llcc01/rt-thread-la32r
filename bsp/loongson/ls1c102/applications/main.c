@@ -30,6 +30,10 @@
 #include "drv_hdmi.h"
 #include "drv_uart.h"
 
+#if defined(RT_USING_DFS) && defined(RT_USING_DFS_ELMFAT)
+#include "dfs_fs.h"
+#endif
+
 #ifdef RT_USING_USER_MAIN
 
 #define HDMI_RES *(volatile int*)0xbfe80000
@@ -64,70 +68,79 @@ int main(int argc, char** argv) {
 
   rt_kprintf("Hello, RT-Thread!\n");
 
-  rt_thread_t id = rt_thread_create("uart", thread2_entry, RT_NULL, 1024,
-                                    RT_MAIN_THREAD_PRIORITY, 10);
-  if (id != RT_NULL) {
-    rt_thread_startup(id);
+#if defined(RT_USING_DFS) && defined(RT_USING_DFS_ELMFAT)
+  rt_kprintf("mount sd0 to / (elm)\n");
+  if (dfs_mount("sd0", "/", "elm", 0, 0) == 0) {
+    rt_kprintf("mount sd0 to / success\n");
   } else {
-    rt_kprintf("Failed to create thread\n");
+    rt_kprintf("mount sd0 to / failed\n");
   }
+#endif
 
-  HDMI_MODE = 1;
-
-  // const char* term_name = "hdmi_term";
-  // char str[] = "Hello RT-Thread!\n";
-
-  // rt_device_t serial = rt_device_find(term_name);
-  // if (!serial) {
-  //   rt_kprintf("find %s failed!\n", term_name);
-  //   return RT_ERROR;
+  // rt_thread_t id = rt_thread_create("uart", thread2_entry, RT_NULL, 1024,
+  //                                   RT_MAIN_THREAD_PRIORITY, 10);
+  // if (id != RT_NULL) {
+  //   rt_thread_startup(id);
+  // } else {
+  //   rt_kprintf("Failed to create thread\n");
   // }
 
-  // rt_err_t ret = rt_device_open(serial, RT_DEVICE_FLAG_WRONLY);
-  // if (ret != RT_EOK) {
-  //   rt_kprintf("open device failed\n");
-  //   return -RT_ERROR;
+  // HDMI_MODE = 1;
+
+  // // const char* term_name = "hdmi_term";
+  // // char str[] = "Hello RT-Thread!\n";
+
+  // // rt_device_t serial = rt_device_find(term_name);
+  // // if (!serial) {
+  // //   rt_kprintf("find %s failed!\n", term_name);
+  // //   return RT_ERROR;
+  // // }
+
+  // // rt_err_t ret = rt_device_open(serial, RT_DEVICE_FLAG_WRONLY);
+  // // if (ret != RT_EOK) {
+  // //   rt_kprintf("open device failed\n");
+  // //   return -RT_ERROR;
+  // // }
+
+  // // /* 发送字符串 */
+  // // rt_size_t send_len = 0;
+  // // send_len = rt_device_write(serial, 0, str, (sizeof(str) - 1));
+  // // if (send_len != sizeof(str) - 1) {
+  // //   rt_kprintf("send data failed\n");
+  // //   return -RT_ERROR;
+  // // }
+  // // /* 关闭设备 */
+  // // ret = rt_device_close(serial);
+  // // if (ret != RT_EOK) {
+  // //   rt_kprintf("close device failed\n");
+  // //   return -RT_ERROR;
+  // // }
+
+  // // rt_kprintf("serial device test successful\n");
+
+  // int i = 0;
+  // int j = 0;
+  // while (1) {
+  //   // rt_kprintf("HDMI_RES: %d\n", i);
+  //   // HDMI_RES = i;
+  //   // rt_thread_mdelay(5000);
+  //   // i++;
+  //   // if (i >= 3) {
+  //   //   i = 0;
+  //   // }
+
+  //   // rt_kprintf("HDMI_MODE: %d\n", j);
+  //   // HDMI_MODE = j;
+  //   // rt_thread_mdelay(5000);
+  //   // j++;
+  //   // if (j >= 2) {
+  //   //   j = 0;
+  //   // }
+
+  //   rt_kprintf("tick: %d\n", rt_tick_get());
+
+  //   rt_thread_mdelay(10);
   // }
-
-  // /* 发送字符串 */
-  // rt_size_t send_len = 0;
-  // send_len = rt_device_write(serial, 0, str, (sizeof(str) - 1));
-  // if (send_len != sizeof(str) - 1) {
-  //   rt_kprintf("send data failed\n");
-  //   return -RT_ERROR;
-  // }
-  // /* 关闭设备 */
-  // ret = rt_device_close(serial);
-  // if (ret != RT_EOK) {
-  //   rt_kprintf("close device failed\n");
-  //   return -RT_ERROR;
-  // }
-
-  // rt_kprintf("serial device test successful\n");
-
-  int i = 0;
-  int j = 0;
-  while (1) {
-    // rt_kprintf("HDMI_RES: %d\n", i);
-    // HDMI_RES = i;
-    // rt_thread_mdelay(5000);
-    // i++;
-    // if (i >= 3) {
-    //   i = 0;
-    // }
-
-    // rt_kprintf("HDMI_MODE: %d\n", j);
-    // HDMI_MODE = j;
-    // rt_thread_mdelay(5000);
-    // j++;
-    // if (j >= 2) {
-    //   j = 0;
-    // }
-
-    rt_kprintf("tick: %d\n", rt_tick_get());
-
-    rt_thread_mdelay(10);
-  }
 
   return 0;
 }

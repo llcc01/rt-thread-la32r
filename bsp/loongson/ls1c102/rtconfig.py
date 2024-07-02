@@ -23,11 +23,11 @@ else:
 if os.getenv('RTT_EXEC_PATH'):
 	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
-# BUILD       = 'debug'
-BUILD       = 'release'
+BUILD       = 'debug'
+# BUILD       = 'release'
 
-PREFIX = 'loongarch32-linux-gnu-'
-# PREFIX = 'loongarch32r-linux-gnusf-'
+# PREFIX = 'loongarch32-linux-gnu-'
+PREFIX = 'loongarch32r-linux-gnusf-'
 CC = PREFIX + 'gcc'
 AS = PREFIX + 'as'
 AR = PREFIX + 'ar'

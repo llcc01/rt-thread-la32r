@@ -7,9 +7,9 @@ OUTPUT_ARCH(loongarch)
 ENTRY(_start)
 MEMORY
 {
-    flash(R) : ORIGIN = 0x1c000000, LENGTH = 256K
-    dram1(RW) : ORIGIN = _RAM1, LENGTH = 8K
-    dram2(RW) : ORIGIN = _RAM2, LENGTH = 8K
+    flash(R) : ORIGIN = 0x1c004000, LENGTH = 240K
+    dram1(RW) : ORIGIN = _RAM1, LENGTH = 10K
+    dram2(RW) : ORIGIN = _RAM2, LENGTH = 6K
 }
 SECTIONS
 {
@@ -109,7 +109,7 @@ SECTIONS
     {
         . = ALIGN(8);
         _system_heap = .;
-        . = . + 0x2000; /* 8kb system heap */
+        . = . + 0x1800; /* 6kb system heap */
         _system_heap_end = .;
     } > dram2
 

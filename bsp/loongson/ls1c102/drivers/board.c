@@ -27,6 +27,7 @@
 #include "drv_spi.h"
 #include "drv_timer.h"
 #include "drv_uart.h"
+#include "drv_uart_qemu.h"
 #include "exception.h"
 // #include "ls1x.h"
 // #include "ls1x_common.h"
@@ -45,7 +46,7 @@ void rt_hw_board_init(void) {
   // gpio_init(1, LA_GPIO_OUTPUT);
   // gpio_init(2, LA_GPIO_OUTPUT);
   // gpio_init(3, LA_GPIO_OUTPUT);
-  gpio_init(4, LA_GPIO_OUTPUT);
+  // gpio_init(4, LA_GPIO_OUTPUT);
 
   // UART_FIFO_CTRL = 0x3;  // 115200
 
@@ -53,7 +54,7 @@ void rt_hw_board_init(void) {
   // gpio_write(1, 1);
   // gpio_write(2, 1);
   // gpio_write(3, 1);
-  gpio_write(4, 1);
+  // gpio_write(4, 1);
 
 #ifdef RT_USING_HEAP
   rt_system_heap_init((void *)&_system_heap, (void *)&_system_heap_end);
@@ -64,31 +65,20 @@ void rt_hw_board_init(void) {
   rt_hw_intc_init();
 
   rt_hw_uart_init();
+  // rt_hw_uart_qemu_init();
 
 #ifdef RT_USING_CONSOLE
   /* set console device */
   rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 
-  rt_hw_pin_init();
+  // rt_hw_pin_init();
 
   rt_hw_timer_init();
 
-#ifdef RT_USING_I2C
-  rt_hw_i2c_init();
+#ifdef RT_USING_COMPONENTS_INIT
+  rt_components_board_init();
 #endif
-
-#ifdef RT_USING_PWM
-  rt_hw_pwm_init();
-#endif
-
-#ifdef RT_USING_SPI
-  rt_hw_spi_init();
-#endif
-
-  // #ifdef RT_USING_COMPONENTS_INIT
-  //   rt_components_board_init();
-  // #endif
 }
 
 /*@}*/

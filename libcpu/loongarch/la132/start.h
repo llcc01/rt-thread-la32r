@@ -3,7 +3,7 @@
 
 /******************  CLK CONFIG  ******************/
 #define RAM1_BASE           (0x80000000)
-#define RAM2_BASE           (0x80002000)
+#define RAM2_BASE           (0x80002800)
 // #define SP_BASE             (0x80002000-132)
 #define REGS_MEM          (0x80004000) //first use in REGS_MEM-4
 

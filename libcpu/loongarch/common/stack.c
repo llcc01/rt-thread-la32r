@@ -41,7 +41,7 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter, rt_uint8_t *stack_ad
     pt->regs[REG_RA] = (rt_ubase_t)texit;
 
     pt->csr_crmd       = 0x0;
-    pt->csr_prmd       = __builtin_loongarch_csrrd(CSR_CRMD) | M_CSR_CRMD_IE;
+    pt->csr_prmd       = __builtin_loongarch_csrrd_w(CSR_CRMD) | M_CSR_CRMD_IE;
     pt->csr_euen       = 0x0;
     pt->csr_ecfg       = 0x0;
     pt->csr_estat      = 0x0;

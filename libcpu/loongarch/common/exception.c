@@ -22,7 +22,7 @@ rt_ubase_t rt_thread_switch_interrupt_flag;
 static void unhandled_interrupt_handler(int vector, void *param) {
   rt_uint32_t estat, exccode, excsubcode;
 
-  estat = __builtin_loongarch_csrrd(CSR_ESTAT);
+  estat = __builtin_loongarch_csrrd_w(CSR_ESTAT);
   exccode = (estat & M_CSR_ESTAT_Ecode) >> S_CSR_ESTAT_Ecode;
   excsubcode = (estat & M_CSR_ESTAT_EsubCode) >> S_CSR_ESTAT_EsubCode;
   if (exccode == 0) {
@@ -134,16 +134,21 @@ void dump_pt_regs(struct pt_regs *regs) {
   rt_kprintf("ERA -> %p\t", regs->csr_era);
   rt_kprintf("BADV -> %p\t", regs->csr_badv);
   rt_kprintf("LAST -> %p\n", regs->last);
+
+  rt_kprintf("\n");
+
+  rt_kprintf("irq_handle_table = %p\n", irq_handle_table);
+
 }
 
 void interrupt_dispatch(struct pt_regs *regs) {
   rt_uint32_t estat, exccode, mask, pending;
 
-  estat = __builtin_loongarch_csrrd(CSR_ESTAT);
+  estat = __builtin_loongarch_csrrd_w(CSR_ESTAT);
   exccode = (estat & M_CSR_ESTAT_Ecode) >> S_CSR_ESTAT_Ecode;
 
   if (exccode == 0) {
-    mask = __builtin_loongarch_csrrd(CSR_ECFG) & M_CSR_ECFG_IM;
+    mask = __builtin_loongarch_csrrd_w(CSR_ECFG) & M_CSR_ECFG_IM;
     pending = (estat & M_CSR_ESTAT_IS & mask) >> S_CSR_ESTAT_IS;
 
     // rt_kprintf("Pending: %x\n", pending);
@@ -179,9 +184,9 @@ void interrupt_dispatch(struct pt_regs *regs) {
       handle_interrupt(IRQ_TO_VECTOR(S_CSR_ESTAT_SW0));
   } else {
     uint32_t esubcode = (estat & M_CSR_ESTAT_EsubCode) >> S_CSR_ESTAT_EsubCode;
-    uint32_t badv = __builtin_loongarch_csrrd(CSR_BADV);
-    uint32_t badi = __builtin_loongarch_csrrd(CSR_BADI);
-    uint32_t era = __builtin_loongarch_csrrd(CSR_ERA);
+    uint32_t badv = __builtin_loongarch_csrrd_w(CSR_BADV);
+    uint32_t badi = __builtin_loongarch_csrrd_w(CSR_BADI);
+    uint32_t era = __builtin_loongarch_csrrd_w(CSR_ERA);
     rt_kprintf("Exception 0x%x(0x%x), badv %p, badi %p, era %p\n",
                exccode, esubcode, badv, badi, era);
     dump_pt_regs(regs);
@@ -194,22 +199,22 @@ void interrupt_dispatch(struct pt_regs *regs) {
 }
 
 rt_base_t rt_hw_interrupt_disable(void) {
-  return __builtin_loongarch_csrxchg(0, M_CSR_CRMD_IE, CSR_CRMD) &
+  return __builtin_loongarch_csrxchg_w(0, M_CSR_CRMD_IE, CSR_CRMD) &
          M_CSR_CRMD_IE;
 }
 
 void rt_hw_interrupt_enable(rt_base_t level) {
-  __builtin_loongarch_csrxchg(level, M_CSR_CRMD_IE, CSR_CRMD);
+  __builtin_loongarch_csrxchg_w(level, M_CSR_CRMD_IE, CSR_CRMD);
 }
 
 void rt_hw_interrupt_mask(int irq) {
   RT_ASSERT(irq >= 0 && irq < LA_MAX_INTR);
-  __builtin_loongarch_csrxchg(0 << irq, 1 << irq, CSR_ECFG);
+  __builtin_loongarch_csrxchg_w(0 << irq, 1 << irq, CSR_ECFG);
 }
 
 void rt_hw_interrupt_umask(int irq) {
   RT_ASSERT(irq >= 0 && irq < LA_MAX_INTR);
-  __builtin_loongarch_csrxchg(1 << irq, 1 << irq, CSR_ECFG);
+  __builtin_loongarch_csrxchg_w(1 << irq, 1 << irq, CSR_ECFG);
 }
 
 void Set_soft_int(void) {

@@ -156,7 +156,7 @@ int rt_hw_uart_init(void) {
   serial1.ops = &ls1x_uart_ops;
   serial1.config = config;
 
-  rt_hw_intc_interrupt_install(UART_IRQ, uart_irq_handler, &serial1, "UART1");
+  rt_hw_intc_interrupt_install(UART_IRQ, uart_irq_handler, &serial1, "uart1");
 
   /* register UART1 device */
   rt_hw_serial_register(
