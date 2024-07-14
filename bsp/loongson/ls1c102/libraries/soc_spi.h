@@ -1,19 +1,21 @@
 #ifndef _SOC_SPI_H
 #define _SOC_SPI_H
 
+#include <rtdevice.h>
+#include <rthw.h>
 #include <rtthread.h>
 
 #define SPI_BASE 0xbfe70000  // spi regs
 
 //******************  SPI REGS  ******************/
 typedef struct {
-  volatile uint8_t SPCR;   /* 控制寄存器 */
-  volatile uint8_t SPSR;   /* 状态寄存器 */
-  volatile uint8_t DATA;   /* 数据寄存器 */
-  volatile uint8_t SPER;   /* 外部寄存器 */
-  volatile uint8_t PARAM;  /* 参数控制寄存器 */
-  volatile uint8_t SOFTCS; /* 片选控制寄存器 */
-  volatile uint8_t TIMING; /* 时序控制寄存器 */
+  volatile rt_uint8_t SPCR;   /* 控制寄存器 */
+  volatile rt_uint8_t SPSR;   /* 状态寄存器 */
+  volatile rt_uint8_t DATA;   /* 数据寄存器 */
+  volatile rt_uint8_t SPER;   /* 外部寄存器 */
+  volatile rt_uint8_t PARAM;  /* 参数控制寄存器 */
+  volatile rt_uint8_t SOFTCS; /* 片选控制寄存器 */
+  volatile rt_uint8_t TIMING; /* 时序控制寄存器 */
 } SPI_TypeDef;
 
 #define SPI ((SPI_TypeDef *)SPI_BASE)
@@ -75,12 +77,12 @@ typedef struct {
 #define SPI_DIV_2048 0b1010
 #define SPI_DIV_4096 0b1011
 
-void soc_Spi_FreqDiv(uint8_t spr);
-void soc_Spi_Init(uint8_t spr);
-void soc_Spi_Cs_Down(uint8_t n);
-void soc_Spi_Cs_Up(uint8_t n);
-void soc_Spi_Write_Read_1to4(uint8_t *buf, int n);
-void soc_Spi_Write_Read(const uint8_t *buf_tx, uint8_t *buf_rx, int n);
+void soc_Spi_FreqDiv(rt_uint8_t spr);
+void soc_Spi_Init(rt_uint8_t spr);
+void soc_Spi_Cs_Down(rt_uint8_t n);
+void soc_Spi_Cs_Up(rt_uint8_t n);
+void soc_Spi_Write_Read_1to4(const rt_uint8_t *buf_tx, rt_uint8_t *buf_rx, int n);
+void soc_Spi_Write_Read(const rt_uint8_t *buf_tx, rt_uint8_t *buf_rx, int n);
 // void soc_Spi_Send(uint8_t *buf, int n);
 
 #endif  // _SOC_SPI_H

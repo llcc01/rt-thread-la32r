@@ -27,7 +27,6 @@
 #include "drv_spi.h"
 #include "drv_timer.h"
 #include "drv_uart.h"
-#include "drv_uart_qemu.h"
 #include "exception.h"
 // #include "ls1x.h"
 // #include "ls1x_common.h"

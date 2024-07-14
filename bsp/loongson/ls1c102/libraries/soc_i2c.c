@@ -1,24 +1,26 @@
 #include "soc_i2c.h"
+#include "rtthread.h"
+#include "rttypes.h"
 
 
 /* I2C START mask */
-#define I2C_START_Set           ((uint8_t)0x80)
-#define I2C_START_Reset         ((uint8_t)0x7F)
+#define I2C_START_Set           ((rt_uint8_t)0x80)
+#define I2C_START_Reset         ((rt_uint8_t)0x7F)
 
 /* I2C STOP mask */
-#define I2C_STOP_Set            ((uint8_t)0x40)
-#define I2C_STOP_Reset          ((uint8_t)0xBF)
+#define I2C_STOP_Set            ((rt_uint8_t)0x40)
+#define I2C_STOP_Reset          ((rt_uint8_t)0xBF)
 
 /* I2C ACK mask */
-#define I2C_ACK_Set             ((uint8_t)0x08)
-#define I2C_ACK_Reset           ((uint8_t)0xF7)
+#define I2C_ACK_Set             ((rt_uint8_t)0x08)
+#define I2C_ACK_Reset           ((rt_uint8_t)0xF7)
 
 /* I2C ADD0 mask */
-#define I2C_ADD0_Set            ((uint8_t)0x01)
-#define I2C_ADD0_Reset          ((uint8_t)0xFE)
+#define I2C_ADD0_Set            ((rt_uint8_t)0x01)
+#define I2C_ADD0_Reset          ((rt_uint8_t)0xFE)
 
-#define FLAG_Mask               ((uint8_t)0xFF)
-#define ITEN_Mask               ((uint8_t)0x40)
+#define FLAG_Mask               ((rt_uint8_t)0xFF)
+#define ITEN_Mask               ((rt_uint8_t)0x40)
 
 void soc_I2C_delay(volatile int j) {
     while(j--) {
@@ -55,8 +57,8 @@ void soc_I2C_StructInit(I2C_InitTypeDef* I2C_InitStruct) {
   * @retval None
   */
 void soc_I2C_Init(I2C_InitTypeDef* I2C_InitStruct) {
-	uint32_t tmp = 0;
-	uint32_t pclk1 = 8000000;// 8MHz 时钟
+	rt_uint32_t tmp = 0;
+	rt_uint32_t pclk1 = 8000000;// 8MHz 时钟
 
 	/* Check the parameters */
 	/*---------------------------- I2C Configuration ------------------------*/
@@ -128,7 +130,7 @@ void soc_I2C_GenerateSTOP(FunctionalState NewState) {
   * @param  Data: Byte to be transmitted.
   * @retval None
   */
-void soc_I2C_SendData(uint8_t Data) {
+void soc_I2C_SendData(rt_uint8_t Data) {
   	/* Write in the DR register the data to be sent */
 	// soc_I2C_Unlock();
 	I2C->DR = Data;
@@ -178,4 +180,41 @@ void soc_I2C_Unlock() {
     }
 }
 
+void soc_sccb_wait_available() {
+    while ((I2C->SCCB_CR_SR) & SCCB_STATE_BUSY) {
+    // 等待传输完毕
+    }
+}
 
+void soc_sccb_wait_power_ready() {
+    while (!((I2C->SCCB_CR_SR) & SCCB_STATE_POWER_READY)) {
+    // 等待摄像头电源就绪
+    }
+}
+
+
+#define SCCB_WRITE   0x00
+
+/**
+ * @brief       SCCB接口3阶段写传输
+ * @param       id_addr : ID Address
+ *              sub_addr: Sub-address
+ *              dat     : Write Data
+ * @retval      无
+ */
+void soc_sccb_3_phase_write(rt_uint8_t id_addr, rt_uint16_t sub_addr, rt_uint8_t dat) {
+    I2C->SCCB_REG_DATA = ((id_addr << 1) | SCCB_WRITE) << 24 | sub_addr << 8 | dat;
+    soc_sccb_wait_available();
+}
+
+void soc_sccb_set_config_done_flag(rt_uint8_t done) {
+    if (done) {
+        I2C->SCCB_CR_SR |= SCCB_STATE_CONFIG_DONE;
+    } else {
+        I2C->SCCB_CR_SR &= ~SCCB_STATE_CONFIG_DONE;
+    }
+}
+
+rt_uint8_t soc_sccb_get_config_done_flag() {
+    return (I2C->SCCB_CR_SR & SCCB_STATE_CONFIG_DONE) ? 1 : 0;
+}

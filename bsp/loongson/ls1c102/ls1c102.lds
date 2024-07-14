@@ -7,7 +7,8 @@ OUTPUT_ARCH(loongarch)
 ENTRY(_start)
 MEMORY
 {
-    flash(R) : ORIGIN = 0x1c004000, LENGTH = 240K
+    flash(R) : ORIGIN = 0x1c000000, LENGTH = 256K
+    /* flash(R) : ORIGIN = 0x1c004000, LENGTH = 240K */
     dram1(RW) : ORIGIN = _RAM1, LENGTH = 10K
     dram2(RW) : ORIGIN = _RAM2, LENGTH = 6K
 }

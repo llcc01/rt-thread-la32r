@@ -27,18 +27,18 @@
 
 #include "OLED.h"
 #include "csrdef.h"
+#include "drivers/spi.h"
 #include "drv_hdmi.h"
 #include "drv_uart.h"
 
 #if defined(RT_USING_DFS) && defined(RT_USING_DFS_ELMFAT)
+#include "spi_msd.h"
 #include "dfs_fs.h"
 #endif
 
 #ifdef RT_USING_USER_MAIN
 
-#define HDMI_RES *(volatile int*)0xbfe80000
-
-void thread2_entry(void* parameter) {
+void thread2_entry(void *parameter) {
   // while (1) {
   //   rt_kprintf("tick: %d\n", rt_tick_get());
   //   OLED_Print_Num(0, 2, rt_tick_get());
@@ -55,7 +55,7 @@ void thread2_entry(void* parameter) {
   }
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
   // I2C_InitTypeDef I2C_InitStruct0;
   // soc_I2C_StructInit(&I2C_InitStruct0);
   // soc_I2C_Init(&I2C_InitStruct0);
@@ -68,14 +68,20 @@ int main(int argc, char** argv) {
 
   rt_kprintf("Hello, RT-Thread!\n");
 
-#if defined(RT_USING_DFS) && defined(RT_USING_DFS_ELMFAT)
-  rt_kprintf("mount sd0 to / (elm)\n");
-  if (dfs_mount("sd0", "/", "elm", 0, 0) == 0) {
-    rt_kprintf("mount sd0 to / success\n");
-  } else {
-    rt_kprintf("mount sd0 to / failed\n");
-  }
-#endif
+  rt_kprintf("set hdmi mode to 3\n");
+  hdmi_set_mode(3);
+
+// #if defined(RT_USING_DFS) && defined(RT_USING_DFS_ELMFAT)
+//   msd_init("sd0", "spi02");
+
+//   dfs_mkfs("elm", "sd0");
+//   // rt_kprintf("mount sd0 to / (elm)\n");
+//   if (dfs_mount("sd0", "/", "elm", 0, 0) == 0) {
+//     rt_kprintf("mount sd0 to / success\n");
+//   } else {
+//     rt_kprintf("mount sd0 to / failed\n");
+//   }
+// #endif
 
   // rt_thread_t id = rt_thread_create("uart", thread2_entry, RT_NULL, 1024,
   //                                   RT_MAIN_THREAD_PRIORITY, 10);

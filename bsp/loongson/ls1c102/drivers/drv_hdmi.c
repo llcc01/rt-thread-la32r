@@ -5,11 +5,11 @@
 #include <rtthread.h>
 #include <stdlib.h>
 
-void hdmi_set_res(uint32_t res) { HDMI_RES = res; }
+void hdmi_set_res(rt_uint32_t res) { HDMI_RES = res; }
 
-void hdmi_set_mode(uint32_t mode) { HDMI_MODE = mode; }
+void hdmi_set_mode(rt_uint32_t mode) { HDMI_MODE = mode; }
 
-void hdmi_putc(uint8_t c) { HDMI_TERM = c; }
+void hdmi_putc(rt_uint8_t c) { HDMI_TERM = c; }
 
 static int rt_hw_hdmi_putc(struct rt_serial_device *serial, char c) {
   RT_ASSERT(serial != RT_NULL);
@@ -38,7 +38,7 @@ int rt_hw_hdmi_term_init() {
 
 static int cmd_hdmi(int argc, char *argv[]) {
   char *arg1;
-  uint8_t arg2;
+  rt_uint8_t arg2;
   switch (argc) {
     case 3:
       arg1 = argv[1];

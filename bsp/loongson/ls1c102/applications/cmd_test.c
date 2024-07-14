@@ -75,7 +75,7 @@ static void cmd_sd(int argc, char *argv[]) {
       rt_kprintf("mount sd0 to / failed\n");
     }
   } else if (strcmp(argv[1], "format") == 0) {
-    if (dfs_mkfs("sd0", "elm") == 0) {
+    if (dfs_mkfs("elm", "sd0") == 0) {
       rt_kprintf("format sd0 success\n");
     } else {
       rt_kprintf("format sd0 failed\n");
