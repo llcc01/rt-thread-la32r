@@ -41,7 +41,7 @@ READELF = PREFIX + 'readelf'
 
 DEVICE = ' -msoft-float'
 # CFLAGS = DEVICE + ' -D_GNU_SOURCE -D_TIMEVAL_DEFINED -fno-builtin -ffunction-sections -fdata-sections -fno-exceptions -fomit-frame-pointer'
-CFLAGS = DEVICE + ' -D_GNU_SOURCE -D_TIMEVAL_DEFINED -fno-builtin -ffunction-sections -fdata-sections -fno-exceptions'
+CFLAGS = DEVICE + ' -D_GNU_SOURCE -D_TIMEVAL_DEFINED -Diovec=iovec -fno-builtin -ffunction-sections -fdata-sections -fno-exceptions -fdiagnostics-color=always'
 AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
 LFLAGS = ' -nostartfiles -static -Wl,--gc-sections,-Map=rtthread.map -T ls1c102.lds'
 # LFLAGS = '-Map=rtthread.map -T ls1c102.lds --gc-sections'

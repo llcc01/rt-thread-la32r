@@ -1,9 +1,9 @@
+#include "OLED.h"
 
 #include <rtthread.h>
 
 #include "soc_i2c.h"
 
-#include "OLED.h"
 
 /************************************************************************
 OLED 一行可以显示16个字符，可以显示8行。

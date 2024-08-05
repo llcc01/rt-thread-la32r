@@ -24,3 +24,14 @@ config SOC_LS1C102
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
+
+menu "SoC Peripheral Drivers"
+    menuconfig BSP_USING_GBE
+        bool "Enable RTL8211F"
+        default n
+        if BSP_USING_GBE
+            menuconfig RT_USING_LWIP
+                bool "LWIP"
+                default y
+        endif
+endmenu

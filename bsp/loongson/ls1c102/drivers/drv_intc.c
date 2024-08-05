@@ -37,6 +37,7 @@ static void intc_handle_interrupt(int vector) {
 void intc_irq_handler(int vector, void *param) {
   uint8_t int_out = INT_OUT;
 
+  rt_interrupt_enter();
   for (int i = 0; i < INTC_MAX_INTR; i++) {
     if (int_out & (1 << i)) {
       intc_handle_interrupt(i);
@@ -44,6 +45,7 @@ void intc_irq_handler(int vector, void *param) {
   }
 
   INT_CLR = 0xff;
+  rt_interrupt_leave();
 }
 
 int rt_hw_intc_init(void) {

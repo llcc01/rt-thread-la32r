@@ -32,8 +32,8 @@
 #include "drv_uart.h"
 
 #if defined(RT_USING_DFS) && defined(RT_USING_DFS_ELMFAT)
-#include "spi_msd.h"
 #include "dfs_fs.h"
+#include "spi_msd.h"
 #endif
 
 #ifdef RT_USING_USER_MAIN
@@ -71,17 +71,17 @@ int main(int argc, char **argv) {
   rt_kprintf("set hdmi mode to 3\n");
   hdmi_set_mode(3);
 
-// #if defined(RT_USING_DFS) && defined(RT_USING_DFS_ELMFAT)
-//   msd_init("sd0", "spi02");
+  // #if defined(RT_USING_DFS) && defined(RT_USING_DFS_ELMFAT)
+  //   msd_init("sd0", "spi02");
 
-//   dfs_mkfs("elm", "sd0");
-//   // rt_kprintf("mount sd0 to / (elm)\n");
-//   if (dfs_mount("sd0", "/", "elm", 0, 0) == 0) {
-//     rt_kprintf("mount sd0 to / success\n");
-//   } else {
-//     rt_kprintf("mount sd0 to / failed\n");
-//   }
-// #endif
+  //   dfs_mkfs("elm", "sd0");
+  //   // rt_kprintf("mount sd0 to / (elm)\n");
+  //   if (dfs_mount("sd0", "/", "elm", 0, 0) == 0) {
+  //     rt_kprintf("mount sd0 to / success\n");
+  //   } else {
+  //     rt_kprintf("mount sd0 to / failed\n");
+  //   }
+  // #endif
 
   // rt_thread_t id = rt_thread_create("uart", thread2_entry, RT_NULL, 1024,
   //                                   RT_MAIN_THREAD_PRIORITY, 10);
@@ -147,6 +147,14 @@ int main(int argc, char **argv) {
 
   //   rt_thread_mdelay(10);
   // }
+
+  rt_pin_mode(4, PIN_MODE_OUTPUT);
+  while (1) {
+    rt_pin_write(4, PIN_HIGH);
+    rt_thread_mdelay(500);
+    rt_pin_write(4, PIN_LOW);
+    rt_thread_mdelay(500);
+  }
 
   return 0;
 }

@@ -4,8 +4,6 @@
 
 #include <stdint.h>
 
-#include "soc_i2c.h"
-
 void OLED_Init(void);
 void OLED_CLS(void);
 void OLED_P6x8Str(uint8_t x, uint8_t y, uint8_t ch[]);

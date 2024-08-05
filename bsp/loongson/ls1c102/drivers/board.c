@@ -70,6 +70,7 @@ void rt_hw_board_init(void) {
   /* set console device */
   rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
+  rt_kprintf("rt-thread init\n");
 
   // rt_hw_pin_init();
 

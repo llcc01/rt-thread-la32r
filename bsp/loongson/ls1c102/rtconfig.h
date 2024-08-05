@@ -11,13 +11,16 @@
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
-#define RT_TICK_PER_SECOND 1000
+#define RT_TICK_PER_SECOND 100
 #define RT_USING_OVERFLOW_CHECK
 #define IDLE_THREAD_STACK_SIZE 1024
 
 /* kservice optimization */
 
 #define RT_KSERVICE_USING_TINY_SIZE
+#define RT_USING_DEBUG
+#define RT_DEBUGING_COLOR
+#define RT_DEBUGING_CONTEXT
 
 /* Inter-Thread communication */
 
@@ -246,5 +249,9 @@
 /* Uncategorized */
 
 #define SOC_LS1C102
+
+/* SoC Peripheral Drivers */
+
+#define BSP_USING_GBE
 
 #endif

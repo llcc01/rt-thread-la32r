@@ -136,9 +136,7 @@ static void uart_irq_handler(int vector, void *param) {
 
   uart_dev = (struct rt_uart_ls1x *)serial->parent.user_data;
 
-  rt_interrupt_enter();
   rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
-  rt_interrupt_leave();
 }
 
 static const struct rt_uart_ops ls1x_uart_ops = {
