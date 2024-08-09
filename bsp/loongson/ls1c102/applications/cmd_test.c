@@ -4,6 +4,8 @@
 #include <stdlib.h>
 
 #include "OLED.h"
+#include "drv_ddr_dma.h"
+#include "rttypes.h"
 
 #if defined(RT_USING_DFS) && defined(RT_USING_DFS_ELMFAT)
 #include "dfs_fs.h"
@@ -21,16 +23,16 @@ static void cmd_oled(int argc, char *argv[]) {
     init_flag = 1;
   }
   switch (argc) {
-    case 4: {
-      uint8_t x = strtoul(argv[1], NULL, 0);
-      uint8_t y = strtoul(argv[2], NULL, 0);
-      char *p = argv[3];
-      OLED_P8x16Str(x, y, p);
-      break;
-    }
-    default:
-      rt_kprintf("\nusage : cmd_oled X Y STRING\n  X: 0-127\n  Y: 0-7\n");
-      break;
+  case 4: {
+    uint8_t x = strtoul(argv[1], NULL, 0);
+    uint8_t y = strtoul(argv[2], NULL, 0);
+    char *p = argv[3];
+    OLED_P8x16Str(x, y, p);
+    break;
+  }
+  default:
+    rt_kprintf("\nusage : cmd_oled X Y STRING\n  X: 0-127\n  Y: 0-7\n");
+    break;
   }
 }
 MSH_CMD_EXPORT(cmd_oled, print string on OLED);
@@ -60,7 +62,7 @@ static void cmd_pwm(int argc, char *argv[]) {
   }
 }
 MSH_CMD_EXPORT(cmd_pwm, set pwm period and pulse);
-#endif
+#endif /* RT_USING_PWM */
 
 #if defined(RT_USING_DFS) && defined(RT_USING_DFS_ELMFAT)
 static void cmd_sd(int argc, char *argv[]) {
@@ -86,4 +88,23 @@ static void cmd_sd(int argc, char *argv[]) {
 }
 MSH_CMD_EXPORT(cmd_sd, sd card test);
 
-#endif
+#endif /* defined(RT_USING_DFS) && defined(RT_USING_DFS_ELMFAT) */
+
+static void cmd_ddr_dma(int argc, char *argv[]) {
+  rt_uint32_t arg1, arg2, arg3, arg4;
+  arg1 = strtoul(argv[1], NULL, 0);
+  arg2 = strtoul(argv[2], NULL, 0);
+  arg3 = strtoul(argv[3], NULL, 0);
+  arg4 = strtoul(argv[4], NULL, 0);
+  if (argc != 1 + 4) {
+    rt_kprintf("usage : cmd_ddr_dma a_wr_addr a_rd_addr\n");
+    return;
+  }
+  rt_kprintf("DDR DMA test\n");
+
+  rt_kprintf("a_wr_addr: 0x%x, len: \n", arg1, arg2);
+  rt_kprintf("a_rd_addr: 0x%x, len: \n", arg3, arg4);
+  ddr_dma_set_wr_ch_addr(0, arg1, arg2);
+  ddr_dma_set_rd_ch_addr(0, arg3, arg4);
+}
+MSH_CMD_EXPORT(cmd_ddr_dma, test ddr dma);

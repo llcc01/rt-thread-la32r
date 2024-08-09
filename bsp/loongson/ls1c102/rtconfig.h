@@ -252,6 +252,5 @@
 
 /* SoC Peripheral Drivers */
 
-#define BSP_USING_GBE
 
 #endif
