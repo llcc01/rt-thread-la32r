@@ -91,20 +91,26 @@ MSH_CMD_EXPORT(cmd_sd, sd card test);
 #endif /* defined(RT_USING_DFS) && defined(RT_USING_DFS_ELMFAT) */
 
 static void cmd_ddr_dma(int argc, char *argv[]) {
-  rt_uint32_t arg1, arg2, arg3, arg4;
-  arg1 = strtoul(argv[1], NULL, 0);
-  arg2 = strtoul(argv[2], NULL, 0);
-  arg3 = strtoul(argv[3], NULL, 0);
-  arg4 = strtoul(argv[4], NULL, 0);
-  if (argc != 1 + 4) {
-    rt_kprintf("usage : cmd_ddr_dma a_wr_addr a_rd_addr\n");
+  rt_uint32_t ch, addr, len;
+  char *arg1 = argv[1];
+  ch = strtoul(argv[2], NULL, 0);
+  addr = strtoul(argv[3], NULL, 0);
+  len = strtoul(argv[4], NULL, 0);
+  if (argc != 1 + 4 || (strcmp(arg1, "r") != 0 && strcmp(arg1, "w") != 0) ||
+      ch > 3) {
+    rt_kprintf("usage : cmd_ddr_dma r/w ch b_addr len\nch: 0-3\n");
     return;
   }
   rt_kprintf("DDR DMA test\n");
 
-  rt_kprintf("a_wr_addr: 0x%x, len: \n", arg1, arg2);
-  rt_kprintf("a_rd_addr: 0x%x, len: \n", arg3, arg4);
-  ddr_dma_set_wr_ch_addr(0, arg1, arg2);
-  ddr_dma_set_rd_ch_addr(0, arg3, arg4);
+  if (strcmp(arg1, "w") == 0) {
+    rt_kprintf("DDR DMA read\n");
+    rt_kprintf("ch: %d, addr: 0x%x, len: %d\n", ch, addr, len);
+    ddr_dma_set_wr_ch_addr(ch, addr, len);
+  } else {
+    rt_kprintf("DDR DMA write\n");
+    rt_kprintf("ch: %d, addr: 0x%x, len: %d\n", ch, addr, len);
+    ddr_dma_set_rd_ch_addr(ch, addr, len);
+  }
 }
 MSH_CMD_EXPORT(cmd_ddr_dma, test ddr dma);
