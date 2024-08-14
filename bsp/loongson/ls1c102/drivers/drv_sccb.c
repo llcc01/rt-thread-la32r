@@ -4,6 +4,7 @@
 #include <rtdevice.h>
 #include <rthw.h>
 #include <rtthread.h>
+#include <sys/types.h>
 
 #include "drv_sccb.h"
 #include "rttypes.h"
@@ -78,6 +79,52 @@ rt_uint8_t atk_mc5640_set_output_format() {
   return 0;
 }
 
+rt_uint8_t atk_mc5640_set_input_start(rt_uint16_t x, rt_uint16_t y) {
+  rt_uint8_t reg3800;
+  rt_uint8_t reg3801;
+  rt_uint8_t reg3802;
+  rt_uint8_t reg3803;
+
+  reg3800 = (rt_uint8_t)(x >> 8) & 0x0F;
+  reg3801 = (rt_uint8_t)x & 0xFF;
+
+  reg3802 = (rt_uint8_t)(y >> 8) & 0x07;
+  reg3803 = (rt_uint8_t)y & 0xFF;
+
+  atk_mc5640_write_reg(0x3212, 0x03);
+  atk_mc5640_write_reg(0x3800, reg3800);
+  atk_mc5640_write_reg(0x3801, reg3801);
+  atk_mc5640_write_reg(0x3802, reg3802);
+  atk_mc5640_write_reg(0x3803, reg3803);
+  atk_mc5640_write_reg(0x3212, 0x13);
+  atk_mc5640_write_reg(0x3212, 0xA3);
+
+  return 0;
+}
+
+rt_uint8_t atk_mc5640_set_input_end(rt_uint16_t x, rt_uint16_t y) {
+  rt_uint8_t reg3804;
+  rt_uint8_t reg3805;
+  rt_uint8_t reg3806;
+  rt_uint8_t reg3807;
+
+  reg3804 = (rt_uint8_t)(x >> 8) & 0x0F;
+  reg3805 = (rt_uint8_t)x & 0xFF;
+
+  reg3806 = (rt_uint8_t)(y >> 8) & 0x07;
+  reg3807 = (rt_uint8_t)y & 0xFF;
+
+  atk_mc5640_write_reg(0x3212, 0x03);
+  atk_mc5640_write_reg(0x3804, reg3804);
+  atk_mc5640_write_reg(0x3805, reg3805);
+  atk_mc5640_write_reg(0x3806, reg3806);
+  atk_mc5640_write_reg(0x3807, reg3807);
+  atk_mc5640_write_reg(0x3212, 0x13);
+  atk_mc5640_write_reg(0x3212, 0xA3);
+
+  return 0;
+}
+
 /**
  * @brief       初始化ATK-MC5640寄存器配置
  * @param       无
@@ -97,11 +144,9 @@ static void atk_mc5640_init_reg(void) {
 void set_test_cfg() {
   rt_uint32_t cfg_index;
 
-  for (cfg_index = 0;
-       cfg_index < sizeof(test_cfg) / sizeof(test_cfg[0]);
+  for (cfg_index = 0; cfg_index < sizeof(test_cfg) / sizeof(test_cfg[0]);
        cfg_index++) {
-    atk_mc5640_write_reg(test_cfg[cfg_index].reg,
-                         test_cfg[cfg_index].dat);
+    atk_mc5640_write_reg(test_cfg[cfg_index].reg, test_cfg[cfg_index].dat);
   }
 }
 
@@ -125,3 +170,25 @@ int rt_hw_sccb_init(void) {
   return 0;
 }
 INIT_BOARD_EXPORT(rt_hw_sccb_init);
+
+static int cmd_cam(int argc, char *argv[]) {
+  if (argc != 1 + 1 + 2) {
+    
+    return -1;
+  }
+  uint16_t x = atoi(argv[2]);
+  uint16_t y = atoi(argv[3]);
+  if (strcmp(argv[1], "loc") == 0) {
+    atk_mc5640_set_sensor_location(x, y);
+  } else if (strcmp(argv[1], "size") == 0) {
+    atk_mc5640_set_output_size(x, y);
+  } else if (strcmp(argv[1], "start") == 0) {
+    atk_mc5640_set_input_start(x, y);
+  } else if (strcmp(argv[1], "end") == 0) {
+    atk_mc5640_set_input_end(x, y);
+  } else {
+    return -1;
+  }
+  return 0;
+}
+MSH_CMD_EXPORT(cmd_cam, cmd_cam);
