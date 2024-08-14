@@ -615,9 +615,11 @@ static void phy_monitor_thread_entry(void *parameter) {
   }
 #endif /* PHY_USING_INTERRUPT_MODE */
   while (1) {
+    LOG_D("phy monitor thread");
     if (rt_event_recv(&rx_event, 0xffffffff,
                       RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
                       RT_WAITING_FOREVER, &status) == RT_EOK) {
+      LOG_D("phy monitor thread event");
       // fake DMA
       /* check dma rx buffer */
       if (!rxDmaDesc[rxIndex].valid) {
@@ -702,17 +704,17 @@ static int rt_hw_bsp_eth_init(void) {
 #endif
 
   /* start phy monitor */
-  // rt_thread_t tid;
-  // tid = rt_thread_create("phy", phy_monitor_thread_entry, RT_NULL, 1024,
-  //                        RT_THREAD_PRIORITY_MAX - 2, 2);
-  // if (tid != RT_NULL) {
-  //   rt_thread_startup(tid);
-  // } else {
-  //   state = -RT_ERROR;
-  // }
+  rt_thread_t tid;
+  tid = rt_thread_create("phy", phy_monitor_thread_entry, RT_NULL, 1024,
+                         RT_THREAD_PRIORITY_MAX - 2, 2);
+  if (tid != RT_NULL) {
+    rt_thread_startup(tid);
+  } else {
+    state = -RT_ERROR;
+  }
 
-  // rt_hw_interrupt_install(VECTOR_ETH_SOURCE, ETH1_IRQHandler, RT_NULL, "eth");
-  // rt_hw_interrupt_umask(IRQ_ETH);
+  rt_hw_interrupt_install(VECTOR_ETH_SOURCE, ETH1_IRQHandler, RT_NULL, "eth");
+  rt_hw_interrupt_umask(IRQ_ETH);
 
   return state;
 }

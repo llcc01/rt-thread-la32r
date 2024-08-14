@@ -104,13 +104,37 @@ static void cmd_ddr_dma(int argc, char *argv[]) {
   rt_kprintf("DDR DMA test\n");
 
   if (strcmp(arg1, "w") == 0) {
-    rt_kprintf("DDR DMA read\n");
+    rt_kprintf("DDR DMA write\n");
     rt_kprintf("ch: %d, addr: 0x%x, len: %d\n", ch, addr, len);
     ddr_dma_set_wr_ch_addr(ch, addr, len);
   } else {
-    rt_kprintf("DDR DMA write\n");
+    rt_kprintf("DDR DMA read\n");
     rt_kprintf("ch: %d, addr: 0x%x, len: %d\n", ch, addr, len);
     ddr_dma_set_rd_ch_addr(ch, addr, len);
   }
 }
 MSH_CMD_EXPORT(cmd_ddr_dma, test ddr dma);
+
+static void cmd_reg(int argc, char *argv[]) {
+  rt_uint32_t addr, val;
+  if (argc < 2) {
+    rt_kprintf("usage : cmd_reg addr1=val1 addr2=val2 ...\n");
+    return;
+  }
+  for (int i = 1; i < argc; i++) {
+    char *arg = argv[i];
+    char *p = strchr(arg, '=');
+    if (p == NULL) {
+      rt_kprintf("usage : cmd_reg addr1=val1 addr2=val2 ...\n");
+      return;
+    }
+    *p = '\0';
+    addr = strtoul(arg, NULL, 0);
+    val = strtoul(p + 1, NULL, 0);
+    rt_kprintf("addr: 0x%x, val: 0x%x\n", addr, val);
+    *(volatile rt_uint32_t *)addr = val;
+  }
+
+  rt_kprintf("reg test\n");
+}
+MSH_CMD_EXPORT(cmd_reg, test register);

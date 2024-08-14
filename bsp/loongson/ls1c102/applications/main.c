@@ -68,8 +68,8 @@ int main(int argc, char **argv) {
 
   rt_kprintf("Hello, RT-Thread!\n");
 
-  rt_kprintf("set hdmi mode to 3\n");
-  hdmi_set_mode(3);
+  // rt_kprintf("set hdmi mode to 3\n");
+  // hdmi_set_mode(3);
 
   // #if defined(RT_USING_DFS) && defined(RT_USING_DFS_ELMFAT)
   //   msd_init("sd0", "spi02");
