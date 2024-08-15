@@ -110,9 +110,9 @@ static rt_uint8_t mac_addr[6] = {0x00, 0x80, 0xE1, 0x11, 0xcc, 0x01};
 rt_base_t level;
 
 /* transmit buffer */
-// static rt_uint8_t txBuffer[ETH_TXBUFNB][ETH_TX_BUF_SIZE];
+static rt_uint8_t txBuffer[ETH_TXBUFNB][ETH_TX_BUF_SIZE];
 /* Receive buffer */
-// static rt_uint8_t rxBuffer[ETH_RXBUFNB][ETH_RX_BUF_SIZE];
+static rt_uint8_t rxBuffer[ETH_RXBUFNB][ETH_RX_BUF_SIZE];
 /* Transmit DMA descriptors */
 static TxDmaDesc txDmaDesc[ETH_TXBUFNB];
 /* Receive DMA descriptors */
@@ -344,7 +344,9 @@ int rt_bsp_eth_init(void) {
 
   return RT_EOK;
 }
+#ifndef RT_USING_LWIP
 INIT_APP_EXPORT(rt_bsp_eth_init);
+#endif
 
 static rt_err_t rt_bsp_eth_open(rt_device_t dev, rt_uint16_t oflag) {
   LOG_D("emac open");
