@@ -58,6 +58,7 @@ int rt_hw_intc_init(void) {
 
   rt_hw_interrupt_install(IRQ_TO_VECTOR(S_CSR_ESTAT_HW4), intc_irq_handler,
                           RT_NULL, "INTC");
+  rt_hw_interrupt_umask(S_CSR_ESTAT_HW4);
   return 0;
 }
 
