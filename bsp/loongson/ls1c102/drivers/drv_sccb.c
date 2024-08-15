@@ -173,7 +173,7 @@ INIT_BOARD_EXPORT(rt_hw_sccb_init);
 
 static int cmd_cam(int argc, char *argv[]) {
   if (argc != 1 + 1 + 2) {
-    
+    rt_kprintf("Usage: %s loc|size|start|end x y\n", argv[0]);
     return -1;
   }
   uint16_t x = atoi(argv[2]);
