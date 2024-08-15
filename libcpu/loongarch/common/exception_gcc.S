@@ -16,28 +16,14 @@
     .globl la_irq_handle
     .global general_exception
 general_exception:
-    BACKUP_T0T1
+    # BACKUP_T0T1
     SAVE_ALL
 
-    /* let s0 keep the current context sp */
-    move    s0, sp
-
-    /* switch to kernel stack */
-    beqz    x0, dispatch
-    move    sp, x0
-    move    x0, zero
-
-    // bl      rt_interrupt_enter
 
 dispatch:
-    /* Get Old SP from s0 as paremeter in a0 */
-    move    a0, s0
+    move    a0, sp
     bl      interrupt_dispatch
 
-    // bl      rt_interrupt_leave
-
-    /* switch sp back to thread context */
-    move    sp, s0
 
 check_switch:
     # /*
@@ -63,4 +49,4 @@ context_switch:
     LONG_L  sp, t1, 0                       /* get new task stack pointer */
 
 spurious_interrupt:
-    RESTORE_ALL_AND_RET 0 1
+    RESTORE_ALL_AND_RET 0

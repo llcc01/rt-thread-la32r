@@ -10,7 +10,6 @@
 #include "regdef.h"
 
 #include "soc_gpio.h"
-#include "context.h"
 
 extern rt_ubase_t __eentry_start;
 struct rt_irq_desc irq_handle_table[RT_MAX_EXC + LA_MAX_INTR];
@@ -66,6 +65,8 @@ static void handle_interrupt(rt_base_t exccode) {
   rt_isr_handler_t irq_func;
 
   RT_ASSERT(exccode < RT_MAX_EXC + LA_MAX_INTR);
+  // rt_kprintf("Handler: %p, Param: %p\n", irq_handle_table[exccode].handler,
+            //  irq_handle_table[exccode].param);
   irq_func = irq_handle_table[exccode].handler;
   param = irq_handle_table[exccode].param;
   irq_func(exccode, param);
@@ -138,11 +139,55 @@ void dump_pt_regs(struct pt_regs *regs) {
   rt_kprintf("\n");
 
   rt_kprintf("irq_handle_table = %p\n", irq_handle_table);
+}
 
+#define __is_print(ch) ((unsigned int)((ch) - ' ') < 127u - ' ')
+void dump_data(const rt_uint8_t *ptr, rt_size_t buflen) {
+  unsigned char *buf = (unsigned char *)ptr;
+  int i, j;
+
+  for (i = 0; i < buflen; i += 16) {
+    rt_kprintf("%08X: ", i);
+
+    for (j = 0; j < 16; j++) {
+      if (i + j < buflen) {
+        rt_kprintf("%02X ", buf[i + j]);
+      } else {
+        rt_kprintf("   ");
+      }
+    }
+    rt_kprintf(" ");
+
+    for (j = 0; j < 16; j++) {
+      if (i + j < buflen) {
+        rt_kprintf("%c", __is_print(buf[i + j]) ? buf[i + j] : '.');
+      }
+    }
+    rt_kprintf("\n");
+  }
+}
+
+void dump_word(const rt_uint32_t *ptr, rt_size_t buflen) {
+  rt_uint32_t *buf = (rt_uint32_t *)ptr;
+  int i, j;
+
+  for (i = 0; i < buflen; i += 4) {
+    rt_kprintf("%08X: ", i * 4);
+
+    for (j = 0; j < 4; j++) {
+      if (i + j < buflen) {
+        rt_kprintf("%08X ", buf[i + j]);
+      } else {
+        rt_kprintf("         ");
+      }
+    }
+    rt_kprintf("\n");
+  }
 }
 
 void interrupt_dispatch(struct pt_regs *regs) {
   rt_uint32_t estat, exccode, mask, pending;
+
 
   estat = __builtin_loongarch_csrrd_w(CSR_ESTAT);
   exccode = (estat & M_CSR_ESTAT_Ecode) >> S_CSR_ESTAT_Ecode;
@@ -153,7 +198,7 @@ void interrupt_dispatch(struct pt_regs *regs) {
 
     // rt_kprintf("Pending: %x\n", pending);
     // gpio_write(4,  0);
-    // rt_kprintf("sp: %p\n",get_current_sp());
+    // rt_kprintf("sp: %p\n", get_current_sp());
 
     if (pending & M_CSR_ESTAT_IPI)
       handle_interrupt(IRQ_TO_VECTOR(S_CSR_ESTAT_IPI));
@@ -187,15 +232,20 @@ void interrupt_dispatch(struct pt_regs *regs) {
     uint32_t badv = __builtin_loongarch_csrrd_w(CSR_BADV);
     uint32_t badi = __builtin_loongarch_csrrd_w(CSR_BADI);
     uint32_t era = __builtin_loongarch_csrrd_w(CSR_ERA);
-    rt_kprintf("Exception 0x%x(0x%x), badv %p, badi %p, era %p\n",
-               exccode, esubcode, badv, badi, era);
+    rt_kprintf("Exception 0x%x(0x%x), badv %p, badi %p, era %p\n", exccode,
+               esubcode, badv, badi, era);
     dump_pt_regs(regs);
+
+    rt_kprintf("Dumping start:\n");
+    dump_word((rt_uint32_t *)0x80000000, 128);
+
+    rt_kprintf("Dumping irq_handle_table:\n");
+    dump_word((rt_uint32_t *)irq_handle_table, (LA_MAX_INTR + RT_MAX_EXC) * 2);
     // handle_interrupt(exccode);
     while (1) {
       ;
     }
   }
-
 }
 
 rt_base_t rt_hw_interrupt_disable(void) {
@@ -218,15 +268,13 @@ void rt_hw_interrupt_umask(int irq) {
 }
 
 void Set_soft_int(void) {
-  asm volatile(
-      "li.w $r12, 0x1;\n"
-      "csrxchg $r12, $r12, 0x4;\n" ::
-          : "$r12");
+  asm volatile("li.w $r12, 0x1;\n"
+               "csrxchg $r12, $r12, 0x4;\n" ::
+                   : "$r12");
 }
 
 void Set_soft_stop(void) {
-  asm volatile(
-      "li.w $r12, 0x1;\n"
-      "csrxchg $r0, $r12, 0x4;\n" ::
-          : "$r12");
+  asm volatile("li.w $r12, 0x1;\n"
+               "csrxchg $r0, $r12, 0x4;\n" ::
+                   : "$r12");
 }

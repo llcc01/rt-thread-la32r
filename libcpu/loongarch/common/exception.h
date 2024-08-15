@@ -7,7 +7,7 @@
 #include <rtthread.h>
 
 #define LA_MAX_INTR 13
-#define RT_MAX_EXC  64
+#define RT_MAX_EXC  16
 
 #define IRQ_TO_VECTOR(x) ((x) + RT_MAX_EXC)
 #define VECTOR_TO_IRQ(x) ((x) - RT_MAX_EXC)

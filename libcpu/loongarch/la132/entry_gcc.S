@@ -50,8 +50,8 @@ cpu_init_start:
         li.w      t0, (0<<S_CSR_ECFG_VS)|(0x0000<<S_CSR_ECFG_IM) // 4 instruction gap
         csrwr     t0, CSR_ECFG
 
-        // set int masks
-        li.w      t0, 0x1fff
+        // set int masks, all disabled
+        li.w      t0, 0x0
         csrxchg t0, t0, CSR_ECFG
 
     // set VSEG4(0x80000000~0x9fffffff) to cached, other VSEG to uncached
