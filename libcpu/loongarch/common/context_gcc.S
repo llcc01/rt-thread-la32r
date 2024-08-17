@@ -26,9 +26,14 @@
  */
     .globl rt_hw_context_switch_to
 rt_hw_context_switch_to:
+    // check if we are in the first context switch
+    bnez    x0, _switch
+    // save kernel sp
+    move    x0, sp
 
+_switch:
     REG_L      sp, a0, 0       /* get new task stack pointer */
-    RESTORE_ALL_AND_RET 1 // restore all registers and CSR_PRMD, 
+    RESTORE_ALL_AND_RET 1 0 // restore all registers and CSR_PRMD, 
 
 /*
  * void rt_hw_context_switch(rt_uint32 from, rt_uint32 to)
@@ -37,20 +42,44 @@ rt_hw_context_switch_to:
  */
     .globl rt_hw_context_switch
 rt_hw_context_switch:
-    # BACKUP_T0T1
+    BACKUP_T0T1
 
 
     // fake an exception
     csrrd   t0, CSR_CRMD
     csrwr   t0, CSR_PRMD
-    csrwr   ra, CSR_ERA
+    move    t0, ra
+    csrwr   t0, CSR_ERA
 
     SAVE_ALL
 
     REG_S      sp, a0, 0       /* store sp in preempted tasks TCB */
     REG_L      sp, a1, 0       /* get new task stack pointer */
 
-    RESTORE_ALL_AND_RET 1
+    RESTORE_ALL_AND_RET 1 0
+
+# /*
+#  * void rt_hw_context_switch_interrupt(rt_uint32 from, rt_uint32 to)/*
+#  */
+#     .globl rt_thread_switch_interrupt_flag
+#     .globl rt_interrupt_from_thread
+#     .globl rt_interrupt_to_thread
+#     .globl rt_hw_context_switch_interrupt
+# rt_hw_context_switch_interrupt:
+#     PTR_LA      t0, rt_thread_switch_interrupt_flag
+#     REG_L       t1, t0, 0
+#     bnez        t1, _reswitch
+
+#     li.w        t1, 0x01                       /* set rt_thread_switch_interrupt_flag to 1 */
+#     LONG_S      t1, t0, 0
+
+#     PTR_LA      t0, rt_interrupt_from_thread   /* set rt_interrupt_from_thread */
+#     LONG_S      a0, t0, 0
+
+# _reswitch:
+#     PTR_LA      t0, rt_interrupt_to_thread     /* set rt_interrupt_to_thread */
+#     LONG_S      a1, t0, 0
+#     jr          ra
 
 /*
  * void rt_hw_context_switch_interrupt_do(rt_base_t flag)

@@ -21,18 +21,18 @@
 	LONG_L	\reg, sp, \offset
 	.endm
 
-	// .macro BACKUP_T0T1
-	// csrwr	t0, CSR_SAVE0
-	// csrwr	t1, CSR_SAVE1
-	// .endm
+	.macro BACKUP_T0T1
+	csrwr	t0, CSR_SAVE0
+	csrwr	t1, CSR_SAVE1
+	.endm
 
-	// .macro RELOAD_T0T1
-	// csrrd   t0, CSR_SAVE0
-	// csrrd   t1, CSR_SAVE1
-	// .endm
+	.macro RELOAD_T0T1
+	csrrd   t0, CSR_SAVE0
+	csrrd   t1, CSR_SAVE1
+	.endm
 
 	.macro	SAVE_TEMP
-	// RELOAD_T0T1
+	RELOAD_T0T1
 	cfi_st	t0, PT_R12
 	cfi_st	t1, PT_R13
 	cfi_st	t2, PT_R14
@@ -56,9 +56,53 @@
 	cfi_st	s8, PT_R31
 	.endm
 
+/*
+ * get_saved_sp returns the SP for the current CPU by looking in the
+ * kernelsp array for it.  If tosp is set, it stores the current sp in
+ * t0 and loads the new value in sp.  If not, it clobbers t0 and
+ * stores the new value in t1, leaving sp unaffected.
+ */
+// #ifdef CONFIG_SMP
+// 	/* SMP variation */
+// 	.macro	get_saved_sp docfi=0 tosp=0
+// 	csrrd	t0, PERCPU_BASE_KS
+// 	la.abs	t1, kernelsp
+// 	LONG_ADDU	t1, t1, t0
+// 	.if \tosp
+// 	or	t0, sp, zero
+// 	LONG_L	sp, t1, 0
+// 	.endif
+// 	.endm
+
+// 	.macro	set_saved_sp stackp temp temp2
+// 	la.abs	\temp, kernelsp
+// 	LONG_ADDU	\temp, \temp, x0
+// 	LONG_S	\stackp, \temp, 0
+// 	.endm
+// #else /* !CONFIG_SMP */
+// 	/* Uniprocessor variation */
+// 	.macro	get_saved_sp docfi=0 tosp=0
+// 	la.abs	t1, kernelsp
+// 	.if \tosp
+// 	move	t0, sp
+// 	.if \docfi
+// 	.cfi_register sp, t0
+// 	.endif
+// 	LONG_L	sp, t1, 0
+// 	.else
+// 	LONG_L	t1, t1, 0
+// 	.endif
+// 	.endm
+
+// 	.macro	set_saved_sp stackp temp temp2
+// 	la.abs	\temp, kernelsp
+// 	LONG_S	\stackp, \temp, 0
+// 	.endm
+// #endif
+
 	.macro	SAVE_SOME
 	move	t0, sp
-	addi.w	t0, t0, PT_SIZE
+	PTR_ADDIU sp, sp, -PT_SIZE
 	cfi_st	t0, PT_R3
 	cfi_st	zero, PT_R0
 
@@ -92,9 +136,8 @@
 	.endm
 
 	.macro	SAVE_ALL
-	PTR_ADDIU sp, sp, -PT_SIZE
-	SAVE_TEMP
 	SAVE_SOME
+	SAVE_TEMP
 	SAVE_STATIC
 	.endm
 
@@ -122,11 +165,9 @@
 	cfi_ld	s8, PT_R31
 	.endm
 
-	.macro	RESTORE_SOME prmd=0
+	.macro	RESTORE_SOME prmd=0 ksp=0
 
 	.if \prmd
-	cfi_ld	t0, PT_CRMD
-	csrwr	t0, CSR_CRMD
 	cfi_ld	t0, PT_PRMD
 	csrwr	t0, CSR_PRMD
 	.endif
@@ -145,12 +186,15 @@
 	cfi_ld	a7, PT_R11
 	cfi_ld	tp, PT_R2
 
+	.if \ksp
+	cfi_ld  x0, PT_R21
+	.endif
+
 	cfi_ld	fp, PT_R22
 	.endm
 
 	.macro	RESTORE_SP
-	// cfi_ld	sp, PT_R3
-	PTR_ADDIU sp, sp, PT_SIZE
+	cfi_ld	sp, PT_R3
 	.endm
 
 	.macro	RESTORE_SP_AND_RET
@@ -158,15 +202,15 @@
 	ertn
 	.endm
 
-	.macro	RESTORE_ALL prmd=0
-	RESTORE_SOME \prmd
+	.macro	RESTORE_ALL prmd=0 ksp=0
+	RESTORE_SOME \prmd \ksp
 	RESTORE_STATIC
 	RESTORE_TEMP
 	RESTORE_SP
 	.endm
 
-	.macro	RESTORE_ALL_AND_RET prmd=0
-	RESTORE_ALL \prmd
+	.macro	RESTORE_ALL_AND_RET prmd=0 ksp=0
+	RESTORE_ALL \prmd \ksp
 	ertn
 	.endm
 
