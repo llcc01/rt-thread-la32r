@@ -2,10 +2,10 @@
 #define _START_H_
 
 /******************  CLK CONFIG  ******************/
-#define RAM1_BASE           (0x80000000)
+#define RAM1_BASE           (0x90000000)
 // #define RAM2_BASE           (0x80002800)
 // #define RAM2_BASE           (0x80004000)
-#define RAM2_BASE           (0x80100000)
+#define RAM2_BASE           (0x90100000)
 // #define SP_BASE             (0x80002000-132)
 // #define REGS_MEM          (0x80004000) //first use in REGS_MEM-4
 
