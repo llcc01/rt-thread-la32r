@@ -32,6 +32,9 @@ menu "SoC Peripheral Drivers"
         if BSP_USING_GBE
             config RT_USING_LWIP
                 bool "LWIP"
-                default y
+                default n
+            config RT_USING_NETDEV
+                bool "netdev"
+                default n
         endif
 endmenu

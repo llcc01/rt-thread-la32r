@@ -369,4 +369,8 @@
 #define STR(x) __STR(x)
 #endif
 
+// #define __builtin_loongarch_csrrd_w __builtin_loongarch_csrrd
+// #define __builtin_loongarch_csrwr_w __builtin_loongarch_csrwr
+// #define __builtin_loongarch_csrxchg_w __builtin_loongarch_csrxchg
+
 #endif /* _CSRDEF_H */

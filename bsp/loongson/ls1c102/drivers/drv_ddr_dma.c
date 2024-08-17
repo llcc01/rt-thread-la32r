@@ -46,4 +46,5 @@ void ddr_dma_set_rd_graph_width(rt_uint8_t ch, rt_uint32_t width) {
     return;
   }
   DDR_DMA_REG_RD_GRAPH_WIDTH(ch) = width;
+  DDR_DMA_REG_RD_UPDATE = 1 << ch;
 }

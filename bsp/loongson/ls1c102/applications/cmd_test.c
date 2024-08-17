@@ -120,14 +120,14 @@ MSH_CMD_EXPORT(cmd_sd, sd card test);
 static void cmd_ddr_dma(int argc, char *argv[]) {
   rt_uint32_t ch, addr, len;
   char *arg1 = argv[1];
-  ch = strtoul(argv[2], NULL, 0);
-  addr = strtoul(argv[3], NULL, 0);
-  len = strtoul(argv[4], NULL, 0);
   if (argc != 1 + 4 || (strcmp(arg1, "r") != 0 && strcmp(arg1, "w") != 0) ||
       ch > 3) {
     rt_kprintf("usage : cmd_ddr_dma r/w ch b_addr len\nch: 0-3\n");
     return;
   }
+  ch = strtoul(argv[2], NULL, 0);
+  addr = strtoul(argv[3], NULL, 0);
+  len = strtoul(argv[4], NULL, 0);
   rt_kprintf("DDR DMA test\n");
 
   if (strcmp(arg1, "w") == 0) {

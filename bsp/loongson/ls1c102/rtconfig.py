@@ -8,12 +8,14 @@ CPU ='la132'
 CROSS_TOOL  = 'gcc'
 
 if os.getenv('RTT_CC'):
-	CROSS_TOOL = os.getenv('RTT_CC')
+    CROSS_TOOL = os.getenv('RTT_CC')
 
 if  CROSS_TOOL == 'gcc':
-	PLATFORM    = 'gcc'
-	EXEC_PATH   = "/home/lc/tools/loongarch32-linux-gnu-2022-04-15/bin"
-	# EXEC_PATH   = r'D:\mipsel-none-elf-win-20180903\bin'
+    PLATFORM    = 'gcc'
+    # EXEC_PATH   = "/home/lc/tools/loongarch32r-linux-gnusf-2022-05-20/bin"
+    # EXEC_PATH   = "/home/lc/tools/loongson-gnu-toolchain-8.3-x86_64-loongarch32r-linux-gnusf-v2.0/bin"
+    EXEC_PATH   = "/home/lc/tools/loongarch32-linux-gnu-2022-04-15/bin"
+    # EXEC_PATH   = r'D:\mipsel-none-elf-win-20180903\bin'
 else:
     print('================ERROR===========================')
     print('Not support %s yet!' % CROSS_TOOL)
@@ -21,7 +23,7 @@ else:
     exit(0)
 
 if os.getenv('RTT_EXEC_PATH'):
-	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+    EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 # BUILD       = 'debug'
 BUILD       = 'release'
@@ -41,7 +43,8 @@ READELF = PREFIX + 'readelf'
 
 DEVICE = ' -msoft-float'
 # CFLAGS = DEVICE + ' -D_GNU_SOURCE -D_TIMEVAL_DEFINED -fno-builtin -ffunction-sections -fdata-sections -fno-exceptions -fomit-frame-pointer'
-CFLAGS = DEVICE + ' -D_GNU_SOURCE -D_TIMEVAL_DEFINED -Diovec=iovec -fno-builtin -ffunction-sections -fdata-sections -fno-exceptions -fno-omit-frame-pointer -fdiagnostics-color=always'
+CFLAGS = DEVICE + ' -D_GNU_SOURCE -D_TIMEVAL_DEFINED -Diovec=iovec -fno-builtin -ffunction-sections -fdata-sections -fno-exceptions -fdiagnostics-color=always'
+CFLAGS += ' -fno-omit-frame-pointer'
 AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
 LFLAGS = ' -nostartfiles -static -Wl,--gc-sections,-Map=rtthread.map -T ls1c102.lds'
 # LFLAGS = '-Map=rtthread.map -T ls1c102.lds --gc-sections'
