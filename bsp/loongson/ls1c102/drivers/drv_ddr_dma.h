@@ -5,5 +5,6 @@
 
 void ddr_dma_set_rd_ch_addr(rt_uint8_t ch, rt_uint32_t addr, rt_uint32_t len);
 void ddr_dma_set_wr_ch_addr(rt_uint8_t ch, rt_uint32_t addr, rt_uint32_t len);
+void ddr_dma_set_rd_graph_width(rt_uint8_t ch, rt_uint32_t width);
 
 #endif

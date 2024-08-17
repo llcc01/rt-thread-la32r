@@ -454,9 +454,7 @@ rt_err_t rt_bsp_eth_tx(rt_device_t dev, struct pbuf *p) {
   /* Clear the interrupt */
   ETHERNET->ETH_TX_IC |= 0x1;
 
-  if (++txIndex > ETH_TXBUFNB - 1) {
-    txIndex = 0;
-  }
+  txIndex = (txIndex + 1) % ETH_TXBUFNB;
 
   return ERR_OK;
 }
@@ -499,9 +497,8 @@ struct pbuf *rt_bsp_eth_rx(rt_device_t dev) {
     dump_hex(rxBuffer[rxIndex], framelen);
 #endif
     /* Increment index and wrap around if necessary */
-    if (++rxIndex > ETH_RXBUFNB - 1) {
-      rxIndex = 0;
-    }
+    rxIndex = (rxIndex + 1) % ETH_RXBUFNB;
+
     // /* Clear RBU flag to resume processing */
     // ETH->DMAC0SR = ETH_DMAC0SR_RBU;
     // /* Instruct the DMA to poll the receive descriptor list */
@@ -519,7 +516,7 @@ void ETH1_IRQHandler(int vector, void *param) {
   /* Frame received */
   if (ETHERNET->ETH_RX_IS) {
     ETHERNET->ETH_RX_IE = 0;
-    LOG_D("emac interrupt rx");
+    // LOG_D("emac interrupt rx");
     rt_event_send(&rx_event, 1);
   } else {
     LOG_D("emac interrupt unknown");
@@ -617,33 +614,34 @@ static void phy_monitor_thread_entry(void *parameter) {
   }
 #endif /* PHY_USING_INTERRUPT_MODE */
   while (1) {
-    LOG_D("phy monitor thread");
     if (rt_event_recv(&rx_event, 0xffffffff,
                       RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
                       RT_WAITING_FOREVER, &status) == RT_EOK) {
-      LOG_D("phy monitor thread event");
       // fake DMA
       /* check dma rx buffer */
       if (!rxDmaDesc[rxIndex].valid) {
-        // rt_uint8_t *rx_message = rxBuffer[rxIndex];
+        rt_uint8_t *rx_message = rxBuffer[rxIndex];
         rt_uint32_t *rx_data_length = &(rxDmaDesc[rxIndex].len);
 
-        // if (rx_message == NULL) {
-        //   return;
-        // }
+        if (rx_message == NULL) {
+          return;
+        }
 
         rt_uint32_t rx_length = ETHERNET->ETH_RX_LENGTH;
         *rx_data_length = rx_length;
 
         rt_uint8_t *rx_buffer = (rt_uint8_t *)(ETHERNET->ETH_RX_DATA);
-        // for (int i = 0; i < rx_length; i++) {
-        //   rx_message[i] = rx_buffer[i];
-        // }
+        for (int i = 0; i < rx_length; i++) {
+          rx_message[i] = rx_buffer[i];
+        }
         rxDmaDesc[rxIndex].valid = 1;
 
+#ifndef RT_USING_LWIP
+        rt_thread_delay(RT_TICK_PER_SECOND / 10);
 #ifdef ETH_RX_DUMP
         rt_kprintf("Rx dump, len= %d\r\n", rx_length);
         dump_hex(rx_buffer, rx_length);
+#endif
 #endif
 
         /* Clear the interrupt */
@@ -656,7 +654,7 @@ static void phy_monitor_thread_entry(void *parameter) {
           /* trigger lwip receive thread */
           eth_device_ready(&(bsp_eth_device.parent));
 #else
-          rt_thread_delay(RT_TICK_PER_SECOND/10);
+          rt_thread_delay(RT_TICK_PER_SECOND / 10);
           rxDmaDesc[rxIndex].valid = 0;
 #endif
         }
@@ -698,7 +696,7 @@ static int rt_hw_bsp_eth_init(void) {
   /* register eth device */
   state = eth_device_init(&(bsp_eth_device.parent), "e0");
   if (RT_EOK == state) {
-    LOG_D("emac device init success");
+    LOG_I("emac device init success");
   } else {
     LOG_E("emac device init faild: %d", state);
     state = -RT_ERROR;

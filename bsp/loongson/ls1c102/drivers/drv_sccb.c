@@ -1,4 +1,3 @@
-#include "drv_i2c.h"
 
 #include <drivers/i2c.h>
 #include <rtdevice.h>
@@ -159,9 +158,6 @@ int rt_hw_sccb_init(void) {
 
   atk_mc5640_set_output_format();
 
-  // ISP input 1920*1920
-  atk_mc5640_set_sensor_location(465, 4);
-
   // ISP output 640*640
   atk_mc5640_set_output_size(640, 640);
 
@@ -170,6 +166,14 @@ int rt_hw_sccb_init(void) {
   return 0;
 }
 INIT_BOARD_EXPORT(rt_hw_sccb_init);
+
+int set_cam() {
+  atk_mc5640_set_input_start(0, 24);
+  rt_thread_delay(100);
+  atk_mc5640_set_sensor_location(120, 0);
+  rt_thread_delay(100);
+}
+INIT_APP_EXPORT(set_cam);
 
 static int cmd_cam(int argc, char *argv[]) {
   if (argc != 1 + 1 + 2) {

@@ -111,8 +111,8 @@ SECTIONS
         /* 2kb system stack */
         /* . = . + 0x800; */
 
-        /* 8KB system stack */
-        . = . + 0x2000;
+        /* 16KB system stack */
+        . = . + 0x4000;
 
         _system_stack = .;
     } > dram1
@@ -125,8 +125,8 @@ SECTIONS
         /* 6kb system heap */
         /* . = . + 0x1800; */
 
-        /* 16kb system heap */
-        . = . + 0x4000;
+        /* 32kb system heap */
+        . = . + 0x8000;
 
         /* 1MB system heap*/
         /* . = . + 0x100000; */

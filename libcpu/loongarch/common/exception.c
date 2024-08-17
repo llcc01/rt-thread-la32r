@@ -4,6 +4,7 @@
 #include <rtthread.h>
 
 #include "csrdef.h"
+#include "drivers/pin.h"
 #include "drv_timer.h"
 #include "drv_uart.h"
 #include "ptrace.h"
@@ -228,6 +229,7 @@ void interrupt_dispatch(struct pt_regs *regs) {
     if (pending & M_CSR_ESTAT_SW0)
       handle_interrupt(IRQ_TO_VECTOR(S_CSR_ESTAT_SW0));
   } else {
+    rt_pin_write(0, PIN_HIGH);
     uint32_t esubcode = (estat & M_CSR_ESTAT_EsubCode) >> S_CSR_ESTAT_EsubCode;
     uint32_t badv = __builtin_loongarch_csrrd_w(CSR_BADV);
     uint32_t badi = __builtin_loongarch_csrrd_w(CSR_BADI);

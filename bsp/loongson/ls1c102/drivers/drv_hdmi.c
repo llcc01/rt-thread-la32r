@@ -3,7 +3,6 @@
 #include <rtdevice.h>
 #include <rthw.h>
 #include <rtthread.h>
-#include <stdlib.h>
 
 #define HDMI_BASE 0xbfe80000
 #define HDMI_RES (*(volatile rt_uint32_t *)(HDMI_BASE + 0x0))
@@ -55,49 +54,3 @@ void hdmi_set_input(rt_uint32_t hres, rt_uint32_t vres, rt_uint32_t hoffset,
   HDMI_IN_VER_OFFSET = voffset;
   HDMI_UPDATE = 1;
 }
-
-static int cmd_hdmi(int argc, char *argv[]) {
-  char *arg1;
-  rt_uint8_t arg2;
-  switch (argc) {
-  case 3:
-    arg1 = argv[1];
-    arg2 = strtoul(argv[2], NULL, 0);
-    if (strcmp(arg1, "res") == 0) {
-      hdmi_set_res(arg2);
-      break;
-    }
-    if (strcmp(arg1, "mode") == 0) {
-      hdmi_set_mode(arg2);
-      break;
-    }
-    // if (strcmp(arg1, "term") == 0) {
-    //   char *p = argv[2];
-    //   while (*p) {
-    //     rt_hw_hdmi_putc(&hdmi_term, *p);
-    //     p++;
-    //   }
-    //   rt_hw_hdmi_putc(&hdmi_term, '\n');
-
-    //   break;
-    // }
-    break;
-  case 6:
-    arg1 = argv[1];
-    if (strcmp(arg1, "input") == 0) {
-      rt_uint32_t hres, vres, hoffset, voffset;
-      hres = strtoul(argv[2], NULL, 0);
-      vres = strtoul(argv[3], NULL, 0);
-      hoffset = strtoul(argv[4], NULL, 0);
-      voffset = strtoul(argv[5], NULL, 0);
-      hdmi_set_input(hres, vres, hoffset, voffset);
-      break;
-    }
-    break;
-  default:
-    rt_kprintf("usage : cmd_hdmi CMD VALUE\n  CMD: res, mode, input\n");
-    break;
-  }
-  return 0;
-}
-MSH_CMD_EXPORT(cmd_hdmi, cmd_hdmi);

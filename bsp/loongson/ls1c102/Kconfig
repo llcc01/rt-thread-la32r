@@ -30,7 +30,7 @@ menu "SoC Peripheral Drivers"
         bool "Enable RTL8211F"
         default n
         if BSP_USING_GBE
-            menuconfig RT_USING_LWIP
+            config RT_USING_LWIP
                 bool "LWIP"
                 default y
         endif
