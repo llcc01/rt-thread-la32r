@@ -36,11 +36,8 @@
 #include <rthw.h>
 
 #define DBG_TAG           "kernel.scheduler"
-#define DBG_LVL           DBG_LOG
+#define DBG_LVL           DBG_INFO
 #include <rtdbg.h>
-
-#include "exception.h"
-#include "context.h"
 
 rt_list_t rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];
 rt_uint32_t rt_thread_ready_priority_group;
@@ -267,9 +264,6 @@ void rt_schedule(void)
                          rt_interrupt_nest, highest_ready_priority,
                          RT_NAME_MAX, to_thread->parent.name, to_thread->sp,
                          RT_NAME_MAX, from_thread->parent.name, from_thread->sp);
-
-                LOG_D("current_sp: 0x%08x", get_current_sp());
-                dump_pt_regs((struct pt_regs *)to_thread->sp);
 
                 RT_SCHEDULER_STACK_CHECK(to_thread);
 

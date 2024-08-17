@@ -643,11 +643,6 @@ static void phy_monitor_thread_entry(void *parameter) {
         dump_hex(rx_buffer, rx_length);
 #endif
 #endif
-
-        /* Clear the interrupt */
-        ETHERNET->ETH_RX_IC = 0x1;
-        ETHERNET->ETH_RX_IE = 0x1;
-
         /* Process all pending packets */
         while (rxDmaDesc[rxIndex].valid) {
 #ifdef RT_USING_LWIP
@@ -658,6 +653,10 @@ static void phy_monitor_thread_entry(void *parameter) {
           rxDmaDesc[rxIndex].valid = 0;
 #endif
         }
+
+        /* Clear the interrupt */
+        ETHERNET->ETH_RX_IC = 0x1;
+        ETHERNET->ETH_RX_IE = 0x1;
       }
     }
   }

@@ -34,7 +34,7 @@ check_switch:
     LONG_L  s1, s0, 0
     beqz    s1, spurious_interrupt
 
-    LONG_S      zero, t0, 0
+    LONG_S      zero, s0, 0
 
     # /*
     # * switch to the new thread

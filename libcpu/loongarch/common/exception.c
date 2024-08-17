@@ -15,10 +15,6 @@
 extern rt_ubase_t __eentry_start;
 struct rt_irq_desc irq_handle_table[RT_MAX_EXC + LA_MAX_INTR];
 
-rt_ubase_t rt_interrupt_from_thread;
-rt_ubase_t rt_interrupt_to_thread;
-rt_ubase_t rt_thread_switch_interrupt_flag;
-
 static void unhandled_interrupt_handler(int vector, void *param) {
   rt_uint32_t estat, exccode, excsubcode;
 
