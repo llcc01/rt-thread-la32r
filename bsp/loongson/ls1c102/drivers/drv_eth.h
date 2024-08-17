@@ -58,7 +58,7 @@ typedef struct
 {
    rt_uint8_t *buf;
    rt_uint32_t len;
-   rt_uint8_t valid: 1;
+   rt_uint8_t valid;
 } TxDmaDesc;
 
 /**
@@ -68,14 +68,14 @@ typedef struct
 {
    rt_uint8_t *buf;
    rt_uint32_t len;
-   rt_uint8_t valid: 1;
+   rt_uint8_t valid;
 } RxDmaDesc;
 
 #define RTL8211F_PHY_ADDR       1           /* PHY address */
 
-#define ETH_TXBUFNB             1           /* Tx buffers of size ETH_TX_BUF_SIZE */
+#define ETH_TXBUFNB             4           /* Tx buffers of size ETH_TX_BUF_SIZE */
 #define ETH_TX_BUF_SIZE         1536        /* buffer size for transmit */
-#define ETH_RXBUFNB             1           /* Rx buffers of size ETH_RX_BUF_SIZE */
+#define ETH_RXBUFNB             4           /* Rx buffers of size ETH_RX_BUF_SIZE */
 #define ETH_RX_BUF_SIZE         1536        /* buffer size for receive */
 
 #define ETH_MMC_INTERRUPT_MASK_TXLPITRCIM_Msk ETH_MMCTXIMR_TXLPITRCIM_Msk /* ETH_MMCTXIMR register  */

@@ -65,6 +65,7 @@ int main(int argc, char **argv) {
   // OLED_P8x16Str(0, 0, "RT-Thread!");
 
   rt_pin_mode(1, PIN_MODE_OUTPUT);
+  rt_pin_mode(0, PIN_MODE_OUTPUT);
 
   rt_kprintf("Hello, RT-Thread!\n");
 
