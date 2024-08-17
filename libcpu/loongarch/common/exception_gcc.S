@@ -30,9 +30,9 @@ check_switch:
     # * if rt_thread_switch_interrupt_flag set, jump to
     # * rt_hw_context_switch_interrupt_do and do not return
     # */
-    PTR_LA  t0, rt_thread_switch_interrupt_flag
-    LONG_L  t1, t0, 0
-    beqz    t1, spurious_interrupt
+    PTR_LA  s0, rt_thread_switch_interrupt_flag
+    LONG_L  s1, s0, 0
+    beqz    s1, spurious_interrupt
 
     LONG_S      zero, t0, 0
 
@@ -41,12 +41,12 @@ check_switch:
     # */
 context_switch:
     PTR_LA  t0, rt_interrupt_from_thread
-    LONG_L  t1, t0, 0
-    LONG_S  sp, t1, 0                       /* store sp in preempted task TCB */
+    LONG_L  a0, t0, 0
+    LONG_S  sp, a0, 0                       /* store sp in preempted task TCB */
 
     PTR_LA  t0, rt_interrupt_to_thread
-    LONG_L  t1, t0, 0
-    LONG_L  sp, t1, 0                       /* get new task stack pointer */
+    LONG_L  a0, t0, 0
+    LONG_L  sp, a0, 0                       /* get new task stack pointer */
 
 spurious_interrupt:
     RESTORE_ALL_AND_RET 0

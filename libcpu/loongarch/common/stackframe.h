@@ -125,6 +125,8 @@
 	.macro	RESTORE_SOME prmd=0
 
 	.if \prmd
+	cfi_ld	t0, PT_CRMD
+	csrwr	t0, CSR_CRMD
 	cfi_ld	t0, PT_PRMD
 	csrwr	t0, CSR_PRMD
 	.endif

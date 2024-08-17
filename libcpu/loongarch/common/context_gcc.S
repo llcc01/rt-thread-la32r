@@ -64,15 +64,15 @@ rt_hw_context_switch_interrupt:
     REG_L       t1, t0, 0
     bnez        t1, _reswitch
 
+    li.w        t1, 0x01                       /* set rt_thread_switch_interrupt_flag to 1 */
+    LONG_S      t1, t0, 0
+
     PTR_LA      t0, rt_interrupt_from_thread   /* set rt_interrupt_from_thread */
     LONG_S      a0, t0, 0
 
 _reswitch:
     PTR_LA      t0, rt_interrupt_to_thread     /* set rt_interrupt_to_thread */
     LONG_S      a1, t0, 0
-
-    li.w        t1, 0x01                       /* set rt_thread_switch_interrupt_flag to 1 */
-    LONG_S      t1, t0, 0
 
     jr          ra
 
