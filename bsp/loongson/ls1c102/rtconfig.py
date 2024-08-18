@@ -13,8 +13,8 @@ if os.getenv('RTT_CC'):
 if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
     # EXEC_PATH   = "/home/lc/tools/loongarch32r-linux-gnusf-2022-05-20/bin"
-    # EXEC_PATH   = "/home/lc/tools/loongson-gnu-toolchain-8.3-x86_64-loongarch32r-linux-gnusf-v2.0/bin"
-    EXEC_PATH   = "/home/lc/tools/loongarch32-linux-gnu-2022-04-15/bin"
+    EXEC_PATH   = "/home/lc/tools/loongson-gnu-toolchain-8.3-x86_64-loongarch32r-linux-gnusf-v2.0/bin"
+    # EXEC_PATH   = "/home/lc/tools/loongarch32-linux-gnu-2022-04-15/bin"
     # EXEC_PATH   = r'D:\mipsel-none-elf-win-20180903\bin'
 else:
     print('================ERROR===========================')

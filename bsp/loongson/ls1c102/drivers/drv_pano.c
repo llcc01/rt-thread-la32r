@@ -1,4 +1,5 @@
 #include "drv_pano.h"
+#include "rtthread.h"
 
 #include <getopt.h>
 #include <stdio.h>
@@ -24,7 +25,7 @@
 #define PANO_REG_LOAD_EN (*(volatile rt_uint32_t *)(PANO_BASE + 0xc8))
 #define PANO_REG_FORCE_LOAD (*(volatile rt_uint32_t *)(PANO_BASE + 0xcc))
 
-static const char *shortopts = "l:ng";
+static const char *shortopts = "w:h:x:y:W:H:r:f:d:D:i:I:R:e:L:F:";
 
 struct option longopts[] = {
     {"w1", required_argument, NULL, 'w'},
@@ -52,51 +53,67 @@ int cmd_pano(int argc, char *argv[]) {
     switch (c) {
     case 'w':
       PANO_REG_W1 = strtol(optarg, NULL, 0);
+      rt_kprintf("PANO_REG_W1: %d\n", PANO_REG_W1);
       break;
     case 'h':
       PANO_REG_H1 = strtol(optarg, NULL, 0);
+      rt_kprintf("PANO_REG_H1: %d\n", PANO_REG_H1);
       break;
     case 'x':
       PANO_REG_X0 = strtol(optarg, NULL, 0);
+      rt_kprintf("PANO_REG_X0: %d\n", PANO_REG_X0);
       break;
     case 'y':
       PANO_REG_Y0 = strtol(optarg, NULL, 0);
+      rt_kprintf("PANO_REG_Y0: %d\n", PANO_REG_Y0);
       break;
     case 'W':
       PANO_REG_W2 = strtol(optarg, NULL, 0);
+      rt_kprintf("PANO_REG_W2: %d\n", PANO_REG_W2);
       break;
     case 'H':
       PANO_REG_H2 = strtol(optarg, NULL, 0);
+      rt_kprintf("PANO_REG_H2: %d\n", PANO_REG_H2);
       break;
     case 'r':
       PANO_REG_R_MIN = strtol(optarg, NULL, 0);
+      rt_kprintf("PANO_REG_R_MIN: %d\n", PANO_REG_R_MIN);
       break;
     case 'f':
       PANO_REG_FLIPY = strtol(optarg, NULL, 0);
+      rt_kprintf("PANO_REG_FLIPY: %d\n", PANO_REG_FLIPY);
       break;
     case 'd':
       PANO_REG_DELTA_PHI_PI = strtol(optarg, NULL, 0);
+      rt_kprintf("PANO_REG_DELTA_PHI_PI: %d\n", PANO_REG_DELTA_PHI_PI);
       break;
     case 'D':
       PANO_REG_H2_DECAY = strtol(optarg, NULL, 0);
+      rt_kprintf("PANO_REG_H2_DECAY: %d\n", PANO_REG_H2_DECAY);
       break;
     case 'i':
       PANO_REG_I1_BASE_ADDR = strtol(optarg, NULL, 0);
+      rt_kprintf("PANO_REG_I1_BASE_ADDR: %d\n", PANO_REG_I1_BASE_ADDR);
       break;
     case 'I':
       PANO_REG_I2_BASE_ADDR = strtol(optarg, NULL, 0);
+      rt_kprintf("PANO_REG_I2_BASE_ADDR: %d\n", PANO_REG_I2_BASE_ADDR);
       break;
     case 'R':
       PANO_REG_RSTN = strtol(optarg, NULL, 0);
+      rt_kprintf("PANO_REG_RSTN: %d\n", PANO_REG_RSTN);
       break;
     case 'e':
       PANO_REG_EN = strtol(optarg, NULL, 0);
+      rt_kprintf("PANO_REG_EN: %d\n", PANO_REG_EN);
       break;
     case 'L':
       PANO_REG_LOAD_EN = strtol(optarg, NULL, 0);
+      rt_kprintf("PANO_REG_LOAD_EN: %d\n", PANO_REG_LOAD_EN);
       break;
     case 'F':
       PANO_REG_FORCE_LOAD = strtol(optarg, NULL, 0);
+      rt_kprintf("PANO_REG_FORCE_LOAD: %d\n", PANO_REG_FORCE_LOAD);
       break;
     default:
       break;
