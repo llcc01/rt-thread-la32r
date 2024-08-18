@@ -235,7 +235,7 @@ void interrupt_dispatch(struct pt_regs *regs) {
     dump_pt_regs(regs);
 
     rt_kprintf("Dumping start:\n");
-    dump_word((rt_uint32_t *)0x80000000, 128);
+    dump_word((rt_uint32_t *)0x90000000, 128);
 
     rt_kprintf("Dumping irq_handle_table:\n");
     dump_word((rt_uint32_t *)irq_handle_table, (LA_MAX_INTR + RT_MAX_EXC) * 2);
