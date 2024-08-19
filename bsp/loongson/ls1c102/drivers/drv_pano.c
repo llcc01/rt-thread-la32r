@@ -25,100 +25,53 @@
 #define PANO_REG_LOAD_EN (*(volatile rt_uint32_t *)(PANO_BASE + 0xc8))
 #define PANO_REG_FORCE_LOAD (*(volatile rt_uint32_t *)(PANO_BASE + 0xcc))
 
-static const char *shortopts = "w:h:x:y:W:H:r:f:d:D:i:I:R:e:L:F:";
-
-struct option longopts[] = {
-    {"w1", required_argument, NULL, 'w'},
-    {"h1", required_argument, NULL, 'h'},
-    {"x0", required_argument, NULL, 'x'},
-    {"y0", required_argument, NULL, 'y'},
-    {"w2", required_argument, NULL, 'W'},
-    {"h2", required_argument, NULL, 'H'},
-    {"r_min", required_argument, NULL, 'r'},
-    {"flipy", required_argument, NULL, 'f'},
-    {"delta_phi_pi", required_argument, NULL, 'd'},
-    {"h2_decay", required_argument, NULL, 'D'},
-    {"i1_base_addr", required_argument, NULL, 'i'},
-    {"i2_base_addr", required_argument, NULL, 'I'},
-    {"rstn", required_argument, NULL, 'R'},
-    {"en", required_argument, NULL, 'e'},
-    {"load_en", required_argument, NULL, 'L'},
-    {"force_load", required_argument, NULL, 'F'},
-    {0, 0, 0, 0},
-};
-
 int cmd_pano(int argc, char *argv[]) {
-  int c;
-  while ((c = getopt_long(argc, argv, shortopts, longopts, NULL)) != -1) {
-    switch (c) {
-    case 'w':
-      PANO_REG_W1 = strtol(optarg, NULL, 0);
-      rt_kprintf("PANO_REG_W1: %d\n", PANO_REG_W1);
-      break;
-    case 'h':
-      PANO_REG_H1 = strtol(optarg, NULL, 0);
-      rt_kprintf("PANO_REG_H1: %d\n", PANO_REG_H1);
-      break;
-    case 'x':
-      PANO_REG_X0 = strtol(optarg, NULL, 0);
-      rt_kprintf("PANO_REG_X0: %d\n", PANO_REG_X0);
-      break;
-    case 'y':
-      PANO_REG_Y0 = strtol(optarg, NULL, 0);
-      rt_kprintf("PANO_REG_Y0: %d\n", PANO_REG_Y0);
-      break;
-    case 'W':
-      PANO_REG_W2 = strtol(optarg, NULL, 0);
-      rt_kprintf("PANO_REG_W2: %d\n", PANO_REG_W2);
-      break;
-    case 'H':
-      PANO_REG_H2 = strtol(optarg, NULL, 0);
-      rt_kprintf("PANO_REG_H2: %d\n", PANO_REG_H2);
-      break;
-    case 'r':
-      PANO_REG_R_MIN = strtol(optarg, NULL, 0);
-      rt_kprintf("PANO_REG_R_MIN: %d\n", PANO_REG_R_MIN);
-      break;
-    case 'f':
-      PANO_REG_FLIPY = strtol(optarg, NULL, 0);
-      rt_kprintf("PANO_REG_FLIPY: %d\n", PANO_REG_FLIPY);
-      break;
-    case 'd':
-      PANO_REG_DELTA_PHI_PI = strtol(optarg, NULL, 0);
-      rt_kprintf("PANO_REG_DELTA_PHI_PI: %d\n", PANO_REG_DELTA_PHI_PI);
-      break;
-    case 'D':
-      PANO_REG_H2_DECAY = strtol(optarg, NULL, 0);
-      rt_kprintf("PANO_REG_H2_DECAY: %d\n", PANO_REG_H2_DECAY);
-      break;
-    case 'i':
-      PANO_REG_I1_BASE_ADDR = strtol(optarg, NULL, 0);
-      rt_kprintf("PANO_REG_I1_BASE_ADDR: %d\n", PANO_REG_I1_BASE_ADDR);
-      break;
-    case 'I':
-      PANO_REG_I2_BASE_ADDR = strtol(optarg, NULL, 0);
-      rt_kprintf("PANO_REG_I2_BASE_ADDR: %d\n", PANO_REG_I2_BASE_ADDR);
-      break;
-    case 'R':
-      PANO_REG_RSTN = strtol(optarg, NULL, 0);
-      rt_kprintf("PANO_REG_RSTN: %d\n", PANO_REG_RSTN);
-      break;
-    case 'e':
-      PANO_REG_EN = strtol(optarg, NULL, 0);
-      rt_kprintf("PANO_REG_EN: %d\n", PANO_REG_EN);
-      break;
-    case 'L':
-      PANO_REG_LOAD_EN = strtol(optarg, NULL, 0);
-      rt_kprintf("PANO_REG_LOAD_EN: %d\n", PANO_REG_LOAD_EN);
-      break;
-    case 'F':
-      PANO_REG_FORCE_LOAD = strtol(optarg, NULL, 0);
-      rt_kprintf("PANO_REG_FORCE_LOAD: %d\n", PANO_REG_FORCE_LOAD);
-      break;
-    default:
-      break;
+
+  PANO_REG_LOAD_EN = 0;
+  for (int i = 1; i < argc; i++) {
+    char *arg = argv[i];
+    char *p = strchr(arg, '=');
+    if (p == NULL) {
+      rt_kprintf(
+          "usage : cmd_pano w1=0 h1=0 x0=0 y0=0 w2=0 h2=0 r_min=0 flipy=0 "
+          "delta_phi_pi=0 h2_decay=0 i1_base_addr=0 i2_base_addr=0\n");
+      return 0;
+    }
+    *p = '\0';
+    if (strcmp(arg, "w1") == 0) {
+      PANO_REG_W1 = strtoul(p + 1, NULL, 0);
+    } else if (strcmp(arg, "h1") == 0) {
+      PANO_REG_H1 = strtoul(p + 1, NULL, 0);
+    } else if (strcmp(arg, "x0") == 0) {
+      PANO_REG_X0 = strtoul(p + 1, NULL, 0);
+    } else if (strcmp(arg, "y0") == 0) {
+      PANO_REG_Y0 = strtoul(p + 1, NULL, 0);
+    } else if (strcmp(arg, "w2") == 0) {
+      rt_uint32_t w2 = strtoul(p + 1, NULL, 0);
+      PANO_REG_W2 = w2;
+      PANO_REG_DELTA_PHI_PI = 512 * 16 / w2;
+    } else if (strcmp(arg, "h2") == 0) {
+      PANO_REG_H2 = strtoul(p + 1, NULL, 0);
+    } else if (strcmp(arg, "r_min") == 0) {
+      PANO_REG_R_MIN = strtoul(p + 1, NULL, 0);
+    } else if (strcmp(arg, "flipy") == 0) {
+      PANO_REG_FLIPY = strtoul(p + 1, NULL, 0);
+      // } else if (strcmp(arg, "delta_phi_pi") == 0) {
+      //   PANO_REG_DELTA_PHI_PI = strtoul(p + 1, NULL, 0);
+    } else if (strcmp(arg, "h2_decay") == 0) {
+      PANO_REG_H2_DECAY = strtoul(p + 1, NULL, 0);
+    } else if (strcmp(arg, "i1_base_addr") == 0) {
+      PANO_REG_I1_BASE_ADDR = strtoul(p + 1, NULL, 0);
+    } else if (strcmp(arg, "i2_base_addr") == 0) {
+      PANO_REG_I2_BASE_ADDR = strtoul(p + 1, NULL, 0);
+    } else {
+      rt_kprintf(
+          "usage : cmd_pano w1=0 h1=0 x0=0 y0=0 w2=0 h2=0 r_min=0 flipy=0 "
+          "h2_decay=0 i1_base_addr=0 i2_base_addr=0\n");
+      return 0;
     }
   }
+  PANO_REG_LOAD_EN = 1;
 
   return 0;
 }
