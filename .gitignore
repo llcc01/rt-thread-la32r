@@ -68,3 +68,6 @@ vdso.lds
 
 # mac
 .DS_Store
+.cache/
+compile_commands.json
+rtt.asm

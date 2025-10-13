@@ -307,3 +307,5 @@ config ARCH_USING_HW_THREAD_SELF
 config ARCH_USING_IRQ_CTX_LIST
     bool
     default n
+config ARCH_LOONGARCH
+    bool

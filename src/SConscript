@@ -41,7 +41,7 @@ if rtconfig.PLATFORM in ['gcc']: # only for GCC
     if 'mips' not in rtconfig.PREFIX: # mips toolchain does not support
         LOCAL_CFLAGS += ' -Wimplicit-fallthrough' # implicit fallthrough warning
         LOCAL_CFLAGS += ' -Wduplicated-cond -Wduplicated-branches' # duplicated condition warning
-    if rtconfig.ARCH not in ['sim']:
+    if rtconfig.ARCH not in ['sim', 'loongarch']:
         LINKFLAGS += ' -Wl,--gc-sections,--print-memory-usage' # remove unused sections and print memory usage
 
 if GetDepend('RT_USING_HOOKLIST') == True:
