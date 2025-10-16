@@ -27,7 +27,7 @@
     .globl rt_hw_context_switch_to
 rt_hw_context_switch_to:
     // check if we are in the first context switch
-    bnez    x0, _switch
+    bne     zero, x0, _switch
     // save kernel sp
     move    x0, sp
 

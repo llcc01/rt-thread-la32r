@@ -54,17 +54,18 @@ cpu_init_start:
         li.w      t0, 0x0
         csrxchg t0, t0, CSR_ECFG
 
-    // set VSEG4(0x80000000~0x9fffffff) to cached, other VSEG to uncached
-        li.w      t0, CACHE_OP
-        csrwr     t0, CSR_SEGCA
+        ## set 0x80000000~0x9fffffff cached
+        li.w      t0, 0x88000011
+        csrwr     t0, 0x180
 
-    // set VSEG4(0x80000000~0x9fffffff) to PSEG0(0x00000000~0x1fffffff), other VSEG unchanged
-        li.w      t0, ADDR_MAP
-        csrwr     t0, CSR_SEGPA
+        ## set 0xa0000000~0xbfffffff to uncached
+        li.w      t0, 0xaa000001
+        csrwr     t0, 0x181
 
-    // set DA=0(change DA-mode to AD-mode)
-        li.w      t0, 0x8
-        csrxchg   zero, t0, CSR_CRMD
+        ##set DA=0 PG=1
+        li.w      t0, 0x18
+        li.w      t1, 0x10
+        csrxchg   t1, t0, CSR_CRMD
 
         la.abs     sp, _system_stack
 

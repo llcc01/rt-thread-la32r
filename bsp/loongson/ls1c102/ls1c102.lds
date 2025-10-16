@@ -9,7 +9,7 @@ MEMORY
 {
     /* flash(R) : ORIGIN = 0x1c000000, LENGTH = 256K */
     /* flash(R) : ORIGIN = 0x1c004000, LENGTH = 240K */
-    flash(R) : ORIGIN = 0xa0000000, LENGTH = 1M
+    flash(R) : ORIGIN = 0x80000000, LENGTH = 1M
     /* dram1(RW) : ORIGIN = _RAM1, LENGTH = 10K */
     /* dram2(RW) : ORIGIN = _RAM2, LENGTH = 6K */
     /* dram1(RW) : ORIGIN = _RAM1, LENGTH = 16K */

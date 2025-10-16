@@ -23,7 +23,7 @@ general_exception:
     move    s0, sp
 
     /* switch to kernel stack */
-    beqz    x0, dispatch
+    beq     zero, x0, dispatch
     move    sp, x0
     move    x0, zero
 
@@ -46,7 +46,7 @@ check_switch:
     # */
     PTR_LA  t0, rt_thread_switch_interrupt_flag
     LONG_L  t1, t0, 0
-    beqz    t1, spurious_interrupt
+    beq     zero, t1, spurious_interrupt
 
     LONG_S      zero, t0, 0
 
