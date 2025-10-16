@@ -16,29 +16,6 @@ _RAM2 = RAM2_BASE
 .section ".startup", "ax"
 .globl _start
 _start:
-    /* copy data section */
-        move     t1 , zero 
-        b    LoopCopyDataInit
-CopyDataInit:
-        la.abs   t3, _sidata
-        add.w    t4, t3, t1  
-        ld.w     t3, t4, 0x0
-        add.w    t4, t0, t1  
-        st.w     t3, t4, 0x0
-        addi.w   t1, t1, 0x4
-LoopCopyDataInit:
-        la.abs   t0, _sdata
-        la.abs   t3, _edata
-        add.w    t2, t0, t1
-        bne      t2, t3, CopyDataInit
-
-    /* clear bss */
-    la.abs      t0, __bss_start
-    la.abs      t1, __bss_end
-LoopFillZerobss:
-    st.w    zero, t0, 0
-    addi.w  t0, t0, 4
-    blt     t0, t1, LoopFillZerobss
 
 // set up basic system function
         /* cpu init*/
@@ -71,6 +48,32 @@ cpu_init_start:
 
         move     x0, zero
 
+
+    /* copy data section */
+        move     t1 , zero 
+        b    LoopCopyDataInit
+CopyDataInit:
+        la.abs   t3, _sidata
+        add.w    t4, t3, t1  
+        ld.w     t3, t4, 0x0
+        add.w    t4, t0, t1  
+        st.w     t3, t4, 0x0
+        addi.w   t1, t1, 0x4
+LoopCopyDataInit:
+        la.abs   t0, _sdata
+        la.abs   t3, _edata
+        add.w    t2, t0, t1
+        bne      t2, t3, CopyDataInit
+
+    /* clear bss */
+    la.abs      t0, __bss_start
+    la.abs      t1, __bss_end
+LoopFillZerobss:
+    st.w    zero, t0, 0
+    addi.w  t0, t0, 4
+    blt     t0, t1, LoopFillZerobss
+
+jump_main:
 	    // bl      main
         /* jump to RT-Thread kernel */
         bl      rtthread_startup
