@@ -1,5 +1,5 @@
 
-#include <drivers/i2c.h>
+#include <drivers/dev_i2c.h>
 #include <rtdevice.h>
 #include <rthw.h>
 #include <rtthread.h>
@@ -14,6 +14,8 @@
 #include <rtdbg.h>
 
 #define ATK_MC5640_SCCB_ADDR 0x3C
+
+#ifdef BSP_USING_SCCB
 
 static void atk_mc5640_write_reg(rt_uint16_t reg, rt_uint8_t dat) {
   soc_sccb_3_phase_write(ATK_MC5640_SCCB_ADDR, reg, dat);
@@ -196,3 +198,5 @@ static int cmd_cam(int argc, char *argv[]) {
   return 0;
 }
 MSH_CMD_EXPORT(cmd_cam, cmd_cam);
+
+#endif // BSP_USING_SCCB

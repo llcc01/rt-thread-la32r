@@ -1,6 +1,6 @@
 #include "drv_spi.h"
 
-#include <drivers/spi.h>
+#include <drivers/dev_spi.h>
 #include <rtdevice.h>
 #include <rthw.h>
 #include <rtthread.h>

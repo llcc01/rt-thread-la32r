@@ -1,3 +1,5 @@
+#if defined BSP_USING_CAM && defined BSP_USING_JPEG
+
 #include <lwip/sockets.h>
 #include <rtthread.h>
 
@@ -97,3 +99,5 @@ static int cmd_udp_server(int argc, char *argv[]) {
   return 0;
 }
 MSH_CMD_EXPORT(cmd_udp_server, udp_server);
+
+#endif

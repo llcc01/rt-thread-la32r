@@ -1,23 +1,10 @@
 mainmenu "RT-Thread Configuration"
 
+BSP_DIR := .
 
-config $BSP_DIR
-    string
-    option env="BSP_ROOT"
-    default "."
+RTT_DIR := ../../..
 
-config $RTT_DIR
-    string
-    option env="RTT_ROOT"
-    default "../../.."
-    
-config $PKGS_DIR
-    string
-    option env="PKGS_ROOT"
-    default "packages"
-
-source "$RTT_DIR/Kconfig"
-source "$PKGS_DIR/Kconfig"
+PKGS_DIR := packages
 
 config SOC_LS1C102
     bool
@@ -38,3 +25,6 @@ menu "SoC Peripheral Drivers"
                 default n
         endif
 endmenu
+
+source "$(RTT_DIR)/Kconfig"
+osource "$PKGS_DIR/Kconfig"

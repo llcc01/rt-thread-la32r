@@ -27,7 +27,7 @@
 
 #include "OLED.h"
 #include "csrdef.h"
-#include "drivers/spi.h"
+#include <drivers/dev_spi.h>
 #include "drv_hdmi.h"
 #include "drv_uart.h"
 
@@ -64,10 +64,12 @@ int main(int argc, char **argv) {
 
   // OLED_P8x16Str(0, 0, "RT-Thread!");
 
-  rt_pin_mode(1, PIN_MODE_OUTPUT);
-  rt_pin_mode(0, PIN_MODE_OUTPUT);
+  // rt_pin_mode(1, PIN_MODE_OUTPUT);
+  // rt_pin_mode(0, PIN_MODE_OUTPUT);
 
   rt_kprintf("Hello, RT-Thread!\n");
+
+  return 0;
 
   // rt_kprintf("set hdmi mode to 3\n");
   // hdmi_set_mode(3);
@@ -149,11 +151,11 @@ int main(int argc, char **argv) {
   //   rt_thread_mdelay(10);
   // }
 
-  rt_pin_mode(4, PIN_MODE_OUTPUT);
+  // rt_pin_mode(4, PIN_MODE_OUTPUT);
   while (1) {
-    rt_pin_write(4, PIN_HIGH);
-    rt_thread_mdelay(500);
-    rt_pin_write(4, PIN_LOW);
+    // rt_pin_write(4, PIN_HIGH);
+    // rt_thread_mdelay(500);
+    // rt_pin_write(4, PIN_LOW);
     rt_thread_mdelay(500);
   }
 

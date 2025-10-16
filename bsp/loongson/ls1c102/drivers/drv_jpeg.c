@@ -22,6 +22,8 @@
 #define JPEG_REG_INPUT_TOP (*(volatile rt_uint32_t *)(JPEG_BASE + 0x1c))
 #define JPEG_REG_INPUT_UPDATE (*(volatile rt_uint32_t *)(JPEG_BASE + 0x20))
 
+#ifdef BSP_USING_JPEG
+
 void jpeg_start() { JPEG_REG_EN = 1; }
 
 void jpeg_stop() { JPEG_REG_EN = 0; }
@@ -129,3 +131,5 @@ static int cmd_jpeg(int argc, char *argv[]) {
   return 0;
 }
 MSH_CMD_EXPORT(cmd_jpeg, cmd_jpeg);
+
+#endif

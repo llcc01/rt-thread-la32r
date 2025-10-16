@@ -1,6 +1,6 @@
 #include "drv_pwm.h"
 
-#include <drivers/rt_drv_pwm.h>
+#include <drivers/dev_pwm.h>
 #include <rtdevice.h>
 #include <rthw.h>
 #include <rtthread.h>
