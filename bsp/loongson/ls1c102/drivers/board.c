@@ -19,12 +19,9 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-#include "drv_hdmi.h"
+#include "hdmi.h"
 #include "drv_i2c.h"
 #include "drv_intc.h"
-#include "drv_pin.h"
-#include "drv_pwm.h"
-#include "drv_spi.h"
 #include "drv_timer.h"
 #include "drv_uart.h"
 #include "exception.h"

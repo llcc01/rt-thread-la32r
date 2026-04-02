@@ -24,6 +24,17 @@ menu "SoC Peripheral Drivers"
                 bool "netdev"
                 default n
         endif
+
+    menuconfig BSP_USING_LVGL
+        bool "Enable BSP LVGL"
+        default n
+
+    if BSP_USING_LVGL
+        menuconfig BSP_USING_LVGL_DEMO
+        bool "Enable BSP LVGL DEMO"
+        default n
+    endif
+
 endmenu
 
 source "$(RTT_DIR)/Kconfig"

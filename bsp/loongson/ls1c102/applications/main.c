@@ -28,7 +28,7 @@
 #include "OLED.h"
 #include "csrdef.h"
 #include <drivers/dev_spi.h>
-#include "drv_hdmi.h"
+#include "hdmi.h"
 #include "drv_uart.h"
 
 #if defined(RT_USING_DFS) && defined(RT_USING_DFS_ELMFAT)
@@ -36,26 +36,50 @@
 #include "spi_msd.h"
 #endif
 
+#include <lvgl.h>
+#include <lv_display_private.h>
+
+#define DBG_TAG "MAIN"
+#define DBG_LVL DBG_LOG
+#include <rtdbg.h>
+
 #ifdef RT_USING_USER_MAIN
 
-void thread2_entry(void *parameter) {
+void thread2_entry(void *parameter)
+{
   // while (1) {
   //   rt_kprintf("tick: %d\n", rt_tick_get());
   //   OLED_Print_Num(0, 2, rt_tick_get());
   //   rt_thread_mdelay(50);
   // }
-  while (1) {
-
-    rt_pin_write(1, PIN_HIGH);
+    while (1)
+    {
+        rt_pin_write(1, PIN_HIGH);
     // my_delay_ms(500);
-    rt_thread_mdelay(100);
-    rt_pin_write(1, PIN_LOW);
+        rt_thread_mdelay(100);
+        rt_pin_write(1, PIN_LOW);
     // my_delay_ms(500);
-    rt_thread_mdelay(100);
-  }
+        rt_thread_mdelay(100);
+    }
 }
 
-int main(int argc, char **argv) {
+LV_IMG_DECLARE(img0);
+LV_IMG_DECLARE(img1);
+LV_IMG_DECLARE(img2);
+LV_IMG_DECLARE(img3);
+LV_IMG_DECLARE(img4);
+LV_IMG_DECLARE(img5);
+LV_IMG_DECLARE(img6);
+
+const lv_image_dsc_t *imgs[] = { &img0, &img1, &img2, &img3, &img4, &img5 };
+// const lv_image_dsc_t *imgs[] = { &img0, &img1 };
+
+#define PIC_NUM (sizeof(imgs) / sizeof(lv_image_dsc_t *))
+
+static lv_draw_buf_t *draw_buf[PIC_NUM] = {};
+
+int main(int argc, char **argv)
+{
   // I2C_InitTypeDef I2C_InitStruct0;
   // soc_I2C_StructInit(&I2C_InitStruct0);
   // soc_I2C_Init(&I2C_InitStruct0);
@@ -67,9 +91,72 @@ int main(int argc, char **argv) {
   // rt_pin_mode(1, PIN_MODE_OUTPUT);
   // rt_pin_mode(0, PIN_MODE_OUTPUT);
 
-  rt_kprintf("Hello, RT-Thread!\n");
+    rt_kprintf("hdmi init\r\n");
+    hdmi_init();
 
-  return 0;
+    rt_kprintf("Hello, RT-Thread!\n");
+
+    extern volatile uint8_t gui_init;
+    while (gui_init == 0)
+    {
+        rt_thread_delay(10);
+    }
+
+    lv_obj_t *panel = lv_img_create(lv_scr_act());
+    lv_obj_t *img = lv_img_create(panel);
+    while (1)
+    {
+        for (size_t i = 0; i < PIC_NUM; i++)
+        {
+            LOG_I("wait %d", i);
+
+            rt_thread_mdelay(100);
+
+            lv_display_t *disp = lv_display_get_default();
+            while (disp->rendering_in_progress)
+            {
+                rt_thread_delay(RT_TICK_PER_SECOND);
+            }
+
+            // if (draw_buf[i])
+            // {
+            //     LOG_I("use cache %d", i);
+            //     memcpy(vbuf[0], draw_buf[i]->data, draw_buf[i]->data_size);
+            //     rt_thread_mdelay(5000);
+            // }
+            // else
+            // {
+            //     LOG_I("first load %d", i);
+
+            //     lv_obj_t *img = lv_img_create(panel);
+            //     lv_obj_set_pos(img, 0, 0);
+            //     lv_img_set_src(img, imgs[i]);
+
+            //     lv_obj_set_size(img, H_NUM, V_NUM);
+            //     lv_image_set_align(img, LV_IMAGE_ALIGN_STRETCH);
+
+            //     while (!draw_buf[i])
+            //     {
+            //         rt_thread_delay(RT_TICK_PER_SECOND);
+
+            //         LOG_I("lv_snapshot_take %d", i);
+
+            //         draw_buf[i] = lv_snapshot_take(panel, LV_COLOR_FORMAT_RGB888);
+            //     }
+            // }
+
+            LOG_I("load %d start", i);
+
+            lv_obj_set_pos(img, 0, 0);
+            lv_img_set_src(img, imgs[i]);
+
+            LOG_I("load %d end", i);
+
+            // rt_thread_mdelay(100);
+        }
+    }
+
+    return 0;
 
   // rt_kprintf("set hdmi mode to 3\n");
   // hdmi_set_mode(3);
@@ -152,14 +239,15 @@ int main(int argc, char **argv) {
   // }
 
   // rt_pin_mode(4, PIN_MODE_OUTPUT);
-  while (1) {
+    while (1)
+    {
     // rt_pin_write(4, PIN_HIGH);
     // rt_thread_mdelay(500);
     // rt_pin_write(4, PIN_LOW);
-    rt_thread_mdelay(500);
-  }
+        rt_thread_mdelay(500);
+    }
 
-  return 0;
+    return 0;
 }
 
 #endif

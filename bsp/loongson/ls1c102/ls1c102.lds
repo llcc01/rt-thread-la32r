@@ -9,13 +9,13 @@ MEMORY
 {
     /* flash(R) : ORIGIN = 0x1c000000, LENGTH = 256K */
     /* flash(R) : ORIGIN = 0x1c004000, LENGTH = 240K */
-    flash(R) : ORIGIN = 0x80000000, LENGTH = 1M
+    flash(R) : ORIGIN = 0x80000000, LENGTH = 16M
     /* dram1(RW) : ORIGIN = _RAM1, LENGTH = 10K */
     /* dram2(RW) : ORIGIN = _RAM2, LENGTH = 6K */
     /* dram1(RW) : ORIGIN = _RAM1, LENGTH = 16K */
     /* dram2(RW) : ORIGIN = _RAM2, LENGTH = 16K */
-    dram1(RW) : ORIGIN = _RAM1, LENGTH = 1M
-    dram2(RW) : ORIGIN = _RAM2, LENGTH = 1M
+    dram1(RW) : ORIGIN = _RAM1, LENGTH = 64M
+    dram2(RW) : ORIGIN = _RAM2, LENGTH = 64M
 }
 SECTIONS
 {
@@ -111,8 +111,8 @@ SECTIONS
         /* 2kb system stack */
         /* . = . + 0x800; */
 
-        /* 64KB system stack */
-        . = . + 0x10000;
+        /* 16MB system stack */
+        . = . + 0x1000000;
 
         _system_stack = .;
     } > dram1
@@ -128,8 +128,8 @@ SECTIONS
         /* 32kb system heap */
         /* . = . + 0x8000; */
 
-        /* 1MB system heap*/
-        . = . + 0x100000;
+        /* 64MB system heap*/
+        . = . + 0x4000000;
 
         _system_heap_end = .;
     } > dram2

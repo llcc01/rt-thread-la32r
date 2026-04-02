@@ -5,6 +5,7 @@
 
 /* SoC Peripheral Drivers */
 
+#define BSP_USING_LVGL
 /* end of SoC Peripheral Drivers */
 
 /* RT-Thread Kernel */
@@ -247,6 +248,12 @@
 
 /* LVGL: powerful and easy-to-use embedded GUI library */
 
+#define PKG_USING_LVGL
+#define PKG_LVGL_THREAD_PRIO 9
+#define PKG_LVGL_THREAD_STACK_SIZE 65536
+#define PKG_LVGL_DISP_REFR_PERIOD 100
+#define PKG_LVGL_USING_LATEST
+#define PKG_LVGL_VER_NUM 0x999999
 /* end of LVGL: powerful and easy-to-use embedded GUI library */
 
 /* u8g2: a monochrome graphic library */
@@ -256,13 +263,6 @@
 
 /* tools packages */
 
-#define PKG_USING_COREMARK
-#define COREMARK_ITERATIONS 3600
-
-/* You may ajust this number to make sure the benchmark runs for at least 10s */
-
-#define PKG_USING_COREMARK_LATEST_VERSION
-#define CORE_MARK_HAS_FLOAT 0
 /* end of tools packages */
 
 /* system packages */

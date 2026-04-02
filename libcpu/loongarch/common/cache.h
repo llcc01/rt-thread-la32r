@@ -1,0 +1,15 @@
+#ifndef CACHE_H
+#define CACHE_H
+
+#define DCACHE_OFFSET_WIDTH 4
+#define DCACHE_INDEX_WIDTH  8
+#define DCACHE_TAG_WIDTH    20
+#define DCACHE_WAY          2
+
+#define DCACHE_INDEX_MASK ((1ULL << (CACHE_INDEX_WIDTH + CACHE_OFFSET_WIDTH)) - (1ULL << (CACHE_OFFSET_WIDTH)))
+#define DCACHE_TAG_MASK   ((1ULL << (CACHE_TAG_WIDTH + CACHE_INDEX_WIDTH + CACHE_OFFSET_WIDTH)) - (1ULL << (CACHE_INDEX_WIDTH + CACHE_OFFSET_WIDTH)))
+
+
+void dcache_invalid_writeback();
+
+#endif

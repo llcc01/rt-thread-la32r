@@ -43,7 +43,7 @@ READELF = PREFIX + 'readelf'
 
 DEVICE = ' -msoft-float'
 # CFLAGS = DEVICE + ' -D_GNU_SOURCE -D_TIMEVAL_DEFINED -fno-builtin -ffunction-sections -fdata-sections -fno-exceptions -fomit-frame-pointer'
-CFLAGS = DEVICE + ' -D_GNU_SOURCE -D_TIMEVAL_DEFINED -Diovec=iovec -fno-builtin -ffunction-sections -fdata-sections -fno-exceptions -fdiagnostics-color=always'
+CFLAGS = DEVICE + ' -D_GNU_SOURCE -D_TIMEVAL_DEFINED -Diovec=iovec -U__linux__ -DLV_LVGL_H_INCLUDE_SIMPLE -fno-builtin -ffunction-sections -fdata-sections -fno-exceptions -fdiagnostics-color=always'
 CFLAGS += ' -fno-omit-frame-pointer'
 AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
 LFLAGS = ' -nostartfiles -static -Wl,--gc-sections,-Map=rtthread.map -T ls1c102.lds'
@@ -56,10 +56,10 @@ if BUILD == 'debug':
     CFLAGS += ' -O0 -gdwarf-2'
     AFLAGS += ' -gdwarf-2'
 else:
-    CFLAGS += ' -O2'
+    CFLAGS += ' -O3'
 
 DUMP_ACTION = OBJDUMP + ' -D -S $TARGET > rtt.asm\n'
 READELF_ACTION = READELF + ' -a $TARGET > rtt.map\n'
 POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
 
-POST_ACTION += DUMP_ACTION
+# POST_ACTION += DUMP_ACTION
